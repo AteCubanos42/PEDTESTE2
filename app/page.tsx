@@ -902,14 +902,14 @@ export default function Home() {
       <section className="section emergency-section" id="emergencia">
         <div className="section-heading">
           <div><span className="eyebrow">MÓDULO 05 · EMERGÊNCIA</span><h2>Folha de Parada + Percentil de Pressão</h2></div>
-          <p>Percentis por idade e sexo, usando estatura no P50, com PAS, PAD, PAM, FC, FR e folha de emergência calculada pelo peso da criança.</p>
+          <p>Percentis por idade e sexo, com PAS, PAD, PAM, FC, FR e folha de emergência calculada pelo peso da criança.</p>
         </div>
-        <div className="emergency-warning"><strong>Uso profissional e conferido</strong><span>Para 1 a 17 anos, P50, P90, P95 e P95 + 12 mmHg seguem a referência da Sociedade Brasileira de Pediatria na coluna de estatura P50. P5 e P10 são exibidos como estimativas matemáticas, e a PAM é calculada a partir de PAS e PAD. A folha de parada mantém os alertas e conferências já existentes.</span></div>
+        <div className="emergency-warning"><strong>Uso profissional e conferido</strong><span>A tabela apresenta P5, P10, P50, P90 e P95 para PAS, PAD e PAM, além das faixas de FC e FR correspondentes à idade. A folha de parada mantém os alertas e conferências já existentes.</span></div>
         <div className="bp-sex-home" aria-label="Escolha do sexo para a tabela de pressão arterial">
           <div>
-            <span className="eyebrow">TABELA DE PA · 1 A 17 ANOS</span>
+            <span className="eyebrow">TABELA DE PA · 1 A 18 ANOS</span>
             <h3>Selecione o sexo antes de abrir os percentis</h3>
-            <p>Para 1 a 17 anos, a seleção masculino/feminino aplica os valores correspondentes à estatura P50 e mantém os dados de FC e FR por faixa etária.</p>
+            <p>Para 1 a 18 anos, selecione masculino ou feminino para consultar os valores correspondentes à idade, mantendo também os dados de FC e FR por faixa etária.</p>
           </div>
           <div className="bp-sex-buttons" role="group" aria-label="Sexo da tabela de pressão arterial">
             <button aria-pressed={bloodPressureSex === "masculino"} className={bloodPressureSex === "masculino" ? "active" : ""} onClick={() => setBloodPressureSex("masculino")} type="button">Masculino</button>
@@ -918,7 +918,7 @@ export default function Home() {
         </div>
         <div className="feature-grid two-cards emergency-tool-grid">
           <button className="feature-card pressure-card" id="pressao" onClick={() => setActiveTool({ type: "blood-pressure" })}>
-            <span className="card-index">01</span><div className="card-icon">PA</div><div><h3>Percentis de pressão · {bloodPressureSex === "feminino" ? "Feminino" : "Masculino"}</h3><p>Sexo selecionado acima. Consulte PAS, PAD e PAM nos níveis P5, P10, P50, P90, P95 e P95 + 12 mmHg, além de FC e FR.</p></div><b>ABRIR →</b>
+            <span className="card-index">01</span><div className="card-icon">PA</div><div><h3>Percentis de pressão · {bloodPressureSex === "feminino" ? "Feminino" : "Masculino"}</h3><p>Sexo selecionado acima. Consulte PAS, PAD e PAM nos níveis P5, P10, P50, P90 e P95, além de FC e FR.</p></div><b>ABRIR →</b>
           </button>
           <button className="feature-card arrest-card" id="folha-parada" onClick={() => setActiveTool({ type: "cardiac-arrest" })}>
             <span className="card-index">02</span><div className="card-icon">PCR</div><div><h3>Folha de parada</h3><p>Medicações, desfibrilação e sequência rápida de intubação calculadas pelo peso rápido.</p></div><b>ABRIR →</b>

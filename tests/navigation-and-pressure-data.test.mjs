@@ -74,7 +74,7 @@ function parseExportedArray(sourceText, exportName) {
   throw new Error(`unterminated export ${exportName}`);
 }
 
-test("SBP references use height P50 and restore P5/P10 estimates, PAM, FC and FR", async () => {
+test("pressure references reproduce the supplied infant, male and female tables", async () => {
   const page = await source("app/page.tsx");
   const emergency = await source("app/EmergencyTools.tsx");
   const data = await source("app/blood-pressure-data.ts");
@@ -83,65 +83,84 @@ test("SBP references use height P50 and restore P5/P10 estimates, PAM, FC and FR
   const male = parseExportedArray(data, "MALE_BLOOD_PRESSURE_REFERENCES");
   const female = parseExportedArray(data, "FEMALE_BLOOD_PRESSURE_REFERENCES");
 
-  assert.deepEqual(male.map((item) => item.ageYears), Array.from({ length: 17 }, (_, index) => index + 1));
-  assert.deepEqual(female.map((item) => item.ageYears), Array.from({ length: 17 }, (_, index) => index + 1));
-  assert.ok(male.every((item) => Number.isFinite(item.heightP50Cm)));
-  assert.ok(female.every((item) => Number.isFinite(item.heightP50Cm)));
-  assert.ok(male.every((item) => item.lowerPercentilesEstimated === true));
-  assert.ok(female.every((item) => item.lowerPercentilesEstimated === true));
-  assert.ok(infant.every((item) => item.lowerPercentilesEstimated === false));
+  assert.deepEqual(male.map((item) => item.ageYears), Array.from({ length: 18 }, (_, index) => index + 1));
+  assert.deepEqual(female.map((item) => item.ageYears), Array.from({ length: 18 }, (_, index) => index + 1));
+  assert.equal(infant.length, 15);
+  assert.ok([...infant, ...male, ...female].every((item) => Number.isFinite(item.fcLow)));
+  assert.ok([...infant, ...male, ...female].every((item) => Number.isFinite(item.fcHigh)));
+  assert.ok([...infant, ...male, ...female].every((item) => Number.isFinite(item.frHigh)));
 
-  for (const item of [...male, ...female]) {
-    const { P5, P10, P50, P90, P95, P95Plus12 } = item.percentiles;
-    assert.equal(P10.systolic, 2 * P50.systolic - P90.systolic);
-    assert.equal(P10.diastolic, 2 * P50.diastolic - P90.diastolic);
-    assert.equal(P5.systolic, 2 * P50.systolic - P95.systolic);
-    assert.equal(P5.diastolic, 2 * P50.diastolic - P95.diastolic);
-    for (const percentile of [P5, P10, P50, P90, P95, P95Plus12]) {
-      assert.equal(percentile.mean, Math.round(((percentile.systolic + 2 * percentile.diastolic) / 3) * 10) / 10);
+  for (const item of [...infant, ...male, ...female]) {
+    assert.deepEqual(Object.keys(item.percentiles), ["P5", "P10", "P50", "P90", "P95"]);
+    for (const percentile of Object.values(item.percentiles)) {
+      assert.ok(Number.isFinite(percentile.systolic));
+      assert.ok(Number.isFinite(percentile.diastolic));
+      assert.ok(Number.isFinite(percentile.mean));
     }
-    assert.ok(Number.isFinite(item.fcLow));
-    assert.ok(Number.isFinite(item.fcHigh));
-    assert.ok(Number.isFinite(item.frHigh));
   }
+
+  assert.deepEqual(infant[0], {
+    id: "1dia",
+    label: "1 dia",
+    ageDays: 1,
+    ageYears: null,
+    fcLow: 90,
+    fcHigh: 180,
+    frHigh: 34,
+    percentiles: {
+      P5: { systolic: 46, diastolic: 38, mean: 40.7 },
+      P10: { systolic: 50, diastolic: 42, mean: 44.7 },
+      P50: { systolic: 65, diastolic: 55, mean: 58.3 },
+      P90: { systolic: 80, diastolic: 68, mean: 72 },
+      P95: { systolic: 84, diastolic: 72, mean: 76 },
+    },
+  });
 
   assert.deepEqual(male[0], {
     id: "1ano-masculino",
     label: "1 ano",
     ageDays: 365.25,
     ageYears: 1,
-    heightP50Cm: 82.4,
     fcLow: 90,
     fcHigh: 180,
     frHigh: 34,
-    lowerPercentilesEstimated: true,
     percentiles: {
-      P5: { systolic: 69, diastolic: 27, mean: 41 },
-      P10: { systolic: 72, diastolic: 29, mean: 43.3 },
-      P50: { systolic: 86, diastolic: 41, mean: 56 },
-      P90: { systolic: 100, diastolic: 53, mean: 68.7 },
-      P95: { systolic: 103, diastolic: 55, mean: 71 },
-      P95Plus12: { systolic: 115, diastolic: 67, mean: 83 },
+      P5: { systolic: 72, diastolic: 38, mean: 49.3 },
+      P10: { systolic: 76, diastolic: 41, mean: 52.7 },
+      P50: { systolic: 91, diastolic: 54, mean: 66.3 },
+      P90: { systolic: 105, diastolic: 67, mean: 79.7 },
+      P95: { systolic: 110, diastolic: 71, mean: 84 },
     },
   });
-  assert.deepEqual(female[16].percentiles, {
-    P5: { systolic: 93, diastolic: 51, mean: 65 },
-    P10: { systolic: 96, diastolic: 55, mean: 68.7 },
-    P50: { systolic: 110, diastolic: 66, mean: 80.7 },
-    P90: { systolic: 124, diastolic: 77, mean: 92.7 },
-    P95: { systolic: 127, diastolic: 81, mean: 96.3 },
-    P95Plus12: { systolic: 139, diastolic: 93, mean: 108.3 },
+
+  assert.deepEqual(female[17], {
+    id: "18anos-feminino",
+    label: "18 anos",
+    ageDays: 6574.5,
+    ageYears: 18,
+    fcLow: 60,
+    fcHigh: 110,
+    frHigh: 14,
+    percentiles: {
+      P5: { systolic: 94, diastolic: 48, mean: 63.3 },
+      P10: { systolic: 98, diastolic: 52, mean: 67.3 },
+      P50: { systolic: 112, diastolic: 66, mean: 81.3 },
+      P90: { systolic: 127, diastolic: 80, mean: 95.7 },
+      P95: { systolic: 131, diastolic: 84, mean: 99.7 },
+    },
   });
 
-  assert.match(emergency, /P5, P10, P50, P90, P95/);
-  assert.match(emergency, /P5 e P10 estimados/);
+  assert.match(emergency, /P5, P10, P50, P90 e P95/);
   assert.match(emergency, /PAM calculada/);
   assert.match(emergency, /FC de referência/);
   assert.match(emergency, /Limite superior de FR/);
-  assert.match(emergency, /Sociedade Brasileira de Pediatria/);
-  assert.match(page, /TABELA DE PA · 1 A 17 ANOS/);
+  assert.doesNotMatch(emergency, /Sociedade Brasileira de Pediatria/);
+  assert.doesNotMatch(emergency, /estimad/);
+  assert.doesNotMatch(emergency, /P95 \+ 12/);
+  assert.match(page, /TABELA DE PA · 1 A 18 ANOS/);
   assert.match(page, /PAS, PAD e PAM/);
   assert.match(page, /FC e FR/);
+  assert.doesNotMatch(page, /estatura P50/);
   assert.match(page, /useState\("10"\)/);
 });
 
@@ -155,7 +174,7 @@ test("pressure and arrest tools expose one-click print actions and print-only la
   assert.match(emergency, /window\.print\(\)/);
   assert.match(css, /@media print/);
   assert.match(css, /main > :not\(\.modal-layer\)/);
-  assert.match(css, /@page \{ size: A4 landscape/);
+  assert.match(css, /@page \{ size: A4 portrait/);
   assert.match(css, /\.modal-close, \.print-hidden/);
 });
 
@@ -198,7 +217,7 @@ test("emergency print layouts fit one A4 sheet and omit nonessential PA comparis
   const css = await source("app/globals.css");
 
   assert.doesNotMatch(emergency, /formula-conflict-note/);
-  assert.match(css, /height: 199mm/);
+  assert.match(css, /height: 287mm/);
   assert.match(css, /\.bp-print-document \.measurement-check \{ display: none !important; \}/);
   assert.match(css, /\.arrest-print-document \.source-note \{ display: none !important; \}/);
   assert.match(css, /\.arrest-print-document \.dose-table th/);

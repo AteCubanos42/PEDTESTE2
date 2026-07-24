@@ -10,7 +10,7 @@ import {
 } from "./blood-pressure-data";
 
 type AgeUnit = "dias" | "meses" | "anos";
-type PercentileKey = "P5" | "P10" | "P50" | "P90" | "P95" | "P95Plus12";
+type PercentileKey = "P5" | "P10" | "P50" | "P90" | "P95";
 
 type DoseRow = {
   name: string;
@@ -22,7 +22,7 @@ type DoseRow = {
   note?: string;
 };
 
-const PERCENTILES: PercentileKey[] = ["P5", "P10", "P50", "P90", "P95", "P95Plus12"];
+const PERCENTILES: PercentileKey[] = ["P5", "P10", "P50", "P90", "P95"];
 
 const PERCENTILE_LABELS: Record<PercentileKey, string> = {
   P5: "P5",
@@ -30,7 +30,6 @@ const PERCENTILE_LABELS: Record<PercentileKey, string> = {
   P50: "P50",
   P90: "P90",
   P95: "P95",
-  P95Plus12: "P95 + 12 mmHg",
 };
 
 function numeric(value: string) {
@@ -72,7 +71,7 @@ function nearestBloodPressureReference(age: number, unit: AgeUnit, sex: BloodPre
   const references = sex === "feminino"
     ? FEMALE_BLOOD_PRESSURE_REFERENCES
     : MALE_BLOOD_PRESSURE_REFERENCES;
-  const completedYears = Math.min(17, Math.max(1, Math.floor(days / 365.25)));
+  const completedYears = Math.min(18, Math.max(1, Math.floor(days / 365.25)));
   return references.find((item) => item.ageYears === completedYears) ?? references[references.length - 1];
 }
 
@@ -88,8 +87,7 @@ function classifyMeasurement(
   if (value < p.P50[field]) return "entre P10 e P50";
   if (value < p.P90[field]) return "entre P50 e P90";
   if (value < p.P95[field]) return "entre P90 e P95";
-  if (p.P95Plus12 && value < p.P95Plus12[field]) return "entre P95 e P95 + 12 mmHg";
-  return p.P95Plus12 ? "igual ou acima de P95 + 12 mmHg" : "igual ou acima do P95";
+  return "igual ou acima do P95";
 }
 
 export function BloodPressureCalculator({ initialSex = "masculino", onSexChange }: { initialSex?: BloodPressureSex; onSexChange?: (sex: BloodPressureSex) => void }) {
@@ -106,7 +104,7 @@ export function BloodPressureCalculator({ initialSex = "masculino", onSexChange 
 
   const ageNumber = numeric(age);
   const ageDays = ageToDays(ageNumber, unit);
-  const validAge = Number.isFinite(ageNumber) && ageNumber > 0 && ageDays < 18 * 365.25;
+  const validAge = Number.isFinite(ageNumber) && ageNumber > 0 && ageDays <= 18 * 365.25;
   const sexApplies = validAge && ageDays >= 365.25;
   const reference = useMemo(
     () => (validAge ? nearestBloodPressureReference(ageNumber, unit, sex) : null),
@@ -117,21 +115,14 @@ export function BloodPressureCalculator({ initialSex = "masculino", onSexChange 
   const measuredMean = Number.isFinite(systolicNumber) && Number.isFinite(diastolicNumber)
     ? (systolicNumber + 2 * diastolicNumber) / 3
     : Number.NaN;
-  const percentileRows = reference
-    ? PERCENTILES.filter((percentile) => percentile !== "P95Plus12" || reference.percentiles.P95Plus12)
-    : [];
-  const referenceBase = reference
-    ? reference.ageYears
-      ? `SBP · estatura P50 · tabela ${sex === "feminino" ? "feminina" : "masculina"}`
-      : "Referência por faixa etária"
-    : "—";
+  const percentileRows = reference ? PERCENTILES : [];
 
   return (
     <div className="print-document bp-print-document">
       <header className="tool-heading emergency-heading">
         <span className="eyebrow">PA PEDIÁTRICA</span>
         <h2>Percentis de pressão arterial</h2>
-        <p>Consulte PAS, PAD e PAM nos níveis P5, P10, P50, P90, P95 e P95 + 12 mmHg.</p>
+        <p>Consulte PAS, PAD e PAM nos níveis P5, P10, P50, P90 e P95.</p>
       </header>
 
       <div className="print-toolbar print-hidden">
@@ -164,7 +155,7 @@ export function BloodPressureCalculator({ initialSex = "masculino", onSexChange 
           </span>
         </label>
         <div className="field bp-sex-field">
-          <span className="field-label">Sexo da tabela de PA (1–17 anos)</span>
+          <span className="field-label">Sexo da tabela de PA (1–18 anos)</span>
           <div className="bp-sex-buttons modal-sex-buttons" role="group" aria-label="Escolha do sexo para os percentis de pressão arterial">
             <button aria-pressed={sex === "masculino"} className={sex === "masculino" ? "active" : ""} disabled={!sexApplies} onClick={() => chooseSex("masculino")} type="button">Masculino</button>
             <button aria-pressed={sex === "feminino"} className={sex === "feminino" ? "active" : ""} disabled={!sexApplies} onClick={() => chooseSex("feminino")} type="button">Feminino</button>
@@ -178,22 +169,16 @@ export function BloodPressureCalculator({ initialSex = "masculino", onSexChange 
         </div>
       </div>
 
-      {!validAge ? <div className="danger-note">Informe uma idade válida entre 1 dia e 17 anos.</div> : null}
+      {!validAge ? <div className="danger-note">Informe uma idade válida entre 1 dia e 18 anos.</div> : null}
 
       {reference ? (
         <>
           <div className="vital-reference-strip">
             <div><span>FC de referência</span><strong>{reference.fcLow ?? "—"}–{reference.fcHigh ?? "—"} bpm</strong></div>
             <div><span>Limite superior de FR</span><strong>{reference.frHigh ? `>${reference.frHigh} irpm` : "—"}</strong></div>
-            <div><span>Estatura de referência</span><strong>{reference.heightP50Cm ? `${fmt(reference.heightP50Cm)} cm · P50` : "—"}</strong></div>
-            <div><span>Base utilizada</span><strong>{referenceBase}</strong></div>
+            <div><span>Tabela selecionada</span><strong>{sexApplies ? (sex === "feminino" ? "Feminina" : "Masculina") : "Lactente"}</strong></div>
+            <div><span>Faixa etária</span><strong>{reference.label}</strong></div>
           </div>
-
-          {reference.lowerPercentilesEstimated ? (
-            <div className="estimated-percentile-note">
-              <strong>P5 e P10 estimados:</strong> a tabela da SBP publica P50, P90, P95 e P95 + 12 mmHg. Os níveis inferiores foram calculados por simetria em torno do P50 e aparecem marcados como estimativas.
-            </div>
-          ) : null}
 
           <div className="bp-table-wrap">
             <table className="clinical-table bp-table">
@@ -201,11 +186,9 @@ export function BloodPressureCalculator({ initialSex = "masculino", onSexChange 
               <tbody>
                 {percentileRows.map((percentile) => {
                   const values = reference.percentiles[percentile];
-                  if (!values) return null;
-                  const estimated = reference.lowerPercentilesEstimated && (percentile === "P5" || percentile === "P10");
                   return (
                     <tr key={percentile}>
-                      <th>{PERCENTILE_LABELS[percentile]}{estimated ? <small>estimado</small> : null}</th>
+                      <th>{PERCENTILE_LABELS[percentile]}</th>
                       <td>{fmt(values.systolic)} <small>mmHg</small></td>
                       <td>{fmt(values.diastolic)} <small>mmHg</small></td>
                       <td>{fmt(values.mean)} <small>mmHg</small></td>
@@ -231,11 +214,6 @@ export function BloodPressureCalculator({ initialSex = "masculino", onSexChange 
             ) : null}
           </section>
 
-          {reference.ageYears ? (
-            <div className="source-note emergency-source-note">
-              <strong>Referência:</strong> Sociedade Brasileira de Pediatria, “Hipertensão arterial na infância e adolescência”, usando a coluna de estatura P50. P5 e P10 são estimativas matemáticas; a PAM é calculada por (PAS + 2 × PAD) ÷ 3.
-            </div>
-          ) : null}
         </>
       ) : null}
     </div>

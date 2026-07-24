@@ -12,9 +12,9 @@ O módulo de pressão arterial possui o botão **Imprimir percentis de pressão*
 
 ## Módulo de PA pediátrica e parada
 
-- **Percentis de PA:** informe a idade em dias, meses ou anos para consultar PAS, PAD e PAM nos níveis P5, P10, P50, P90, P95 e P95 + 12 mmHg, além de FC e FR por faixa etária. Para 1–17 anos, P5 e P10 são exibidos como estimativas matemáticas; P50, P90, P95 e P95 + 12 mmHg seguem a tabela da SBP na coluna de estatura P50.
+- **Percentis de PA:** informe a idade em dias, meses ou anos para consultar PAS, PAD e PAM nos níveis P5, P10, P50, P90 e P95, além de FC e FR por faixa etária.
 - **Folha de parada:** utiliza o peso rápido do site para calcular volumes, energias de desfibrilação e itens da sequência rápida de intubação.
-- Para 1 a 17 anos, a interface usa tabelas separadas para masculino e feminino e a estatura de referência no percentil 50.
+- Para 1 a 18 anos, a interface usa tabelas separadas para masculino e feminino.
 - As planilhas originais não foram incluídas no repositório porque continham campos com identificação de pacientes; somente as tabelas clínicas sem dados pessoais foram transcritas.
 
 ## Requisitos
@@ -117,7 +117,7 @@ As referências clínicas oficiais aparecem dentro da própria interface. Antes 
 
 - Atalhos superiores reorganizados por módulo: manutenção, distúrbios hidroeletrolíticos, infusões, antimicrobianos e pressões.
 - Atalho fixo no cabeçalho para a área de folha de parada e pressão arterial.
-- Percentis de PA de 1 a 17 anos com seleção masculina ou feminina e estatura de referência no P50.
+- Percentis de PA de 1 a 18 anos com seleção masculina ou feminina.
 
 ## Atualização de módulos — julho de 2026
 
@@ -128,11 +128,10 @@ As referências clínicas oficiais aparecem dentro da própria interface. Antes 
 
 ## Atualização de percentis de pressão arterial
 
-- Para 1 a 17 anos, P50, P90, P95 e P95 + 12 mmHg usam as tabelas da Sociedade Brasileira de Pediatria, separadas por sexo e considerando a coluna de estatura P50.
-- P5 e P10 foram incluídos como estimativas matemáticas por simetria em torno do P50: P10 = 2 × P50 − P90 e P5 = 2 × P50 − P95.
-- A PAM voltou a ser exibida e é calculada pela fórmula (PAS + 2 × PAD) ÷ 3 em todos os níveis.
-- As faixas de frequência cardíaca e frequência respiratória voltaram à tela de PA.
-- O sistema identifica visualmente P5 e P10 como estimados para não confundi-los com valores publicados diretamente pela SBP.
+- Tabelas completas de P5, P10, P50, P90 e P95 para lactentes e para crianças e adolescentes de 1 a 18 anos.
+- Seleção de sexo masculino ou feminino a partir de 1 ano.
+- PAS, PAD e PAM exibidas diretamente em cada percentil.
+- Faixas de frequência cardíaca e frequência respiratória mantidas por idade.
 
 ## Atualização desta versão
 
@@ -142,7 +141,7 @@ As referências clínicas oficiais aparecem dentro da própria interface. Antes 
 - Heparina não fracionada em Anticoagulantes.
 - Preparos intramusculares em pó com seleção de 2, 3 ou 4 mL de água destilada e cálculo automático da concentração resultante e do volume por dose.
 - Apresentações líquidas IM exibidas como sem reconstituição.
-- Impressões de percentis de PA e folha de parada compactadas para uma folha A4 em paisagem.
+- Impressões de percentis de PA e folha de parada compactadas para uma única folha A4 em modo retrato (vertical).
 - A comparação opcional da pressão medida é ocultada apenas na impressão.
 
 ## Módulo 07 - Nutrição parenteral total

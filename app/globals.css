@@ -796,8 +796,8 @@ footer > div:last-child a, footer > div:last-child span { color: var(--teal); fo
 
 
 @media print {
-  @page { size: A4 landscape; margin: 5mm; }
-  html, body { background: #fff !important; height: auto !important; }
+  @page { size: A4 portrait; margin: 5mm; }
+  html, body { background: #fff !important; height: auto !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body { margin: 0 !important; }
   main > :not(.modal-layer) { display: none !important; }
   .modal-layer {
@@ -823,8 +823,8 @@ footer > div:last-child a, footer > div:last-child span { color: var(--teal); fo
   .print-only { display: flex !important; }
   .print-document {
     box-sizing: border-box;
-    height: 199mm;
-    max-height: 199mm;
+    height: 287mm;
+    max-height: 287mm;
     overflow: hidden;
     width: 100%;
   }
@@ -877,55 +877,117 @@ footer > div:last-child a, footer > div:last-child span { color: var(--teal); fo
   }
   .bp-print-document .bp-table tbody td { font-size: 11pt !important; padding: 4px 7px !important; }
   .bp-print-document .bp-table tbody th { font-size: 8pt !important; padding: 4px 7px !important; }
+  .bp-print-document {
+    font-size: 8pt !important;
+  }
+  .bp-print-document .tool-heading h2 { font-size: 14pt !important; }
+  .bp-print-document .clinical-table { table-layout: fixed !important; }
+  .bp-print-document .bp-table thead th { font-size: 7pt !important; }
+  .bp-print-document .bp-table tbody td { font-size: 10pt !important; padding: 5px 7px !important; }
+  .bp-print-document .bp-table tbody th { font-size: 7.5pt !important; padding: 5px 7px !important; }
   .bp-print-document .source-note {
     font-size: 6pt !important;
     line-height: 1.2 !important;
     margin-top: 4px !important;
     padding: 4px 6px !important;
   }
+  .arrest-print-document {
+    color: #101f23 !important;
+    font-size: 5.4pt !important;
+  }
+  .arrest-print-document .tool-heading { margin-bottom: 2px !important; }
+  .arrest-print-document .tool-heading .eyebrow { font-size: 5.6pt !important; }
+  .arrest-print-document .tool-heading h2 { font-size: 12pt !important; }
   .arrest-print-document .arrest-weight-panel {
     background: #eef3f1 !important;
     border: 1px solid #d1ddd7 !important;
     display: block !important;
-    margin: 2px 0 4px !important;
-    padding: 4px 7px !important;
+    margin: 1px 0 3px !important;
+    padding: 3px 5px !important;
   }
-  .arrest-print-document .arrest-weight-panel .field { display: grid; grid-template-columns: auto 110px; gap: 8px; align-items: center; }
-  .arrest-print-document .arrest-weight-panel .field-label { font-size: 6.5pt !important; }
-  .arrest-print-document .arrest-weight-panel input { font-size: 8pt !important; min-height: 24px !important; padding: 2px 5px !important; }
+  .arrest-print-document .arrest-weight-panel .field {
+    align-items: center;
+    display: grid;
+    gap: 6px;
+    grid-template-columns: auto 82px;
+  }
+  .arrest-print-document .arrest-weight-panel .field-label { font-size: 5.6pt !important; }
+  .arrest-print-document .arrest-weight-panel input {
+    font-size: 7pt !important;
+    min-height: 19px !important;
+    padding: 1px 4px !important;
+  }
   .arrest-print-document .critical-warning {
-    gap: 6px !important;
+    gap: 4px !important;
     grid-template-columns: auto 1fr !important;
-    margin: 2px 0 4px !important;
-    padding: 3px 6px !important;
+    margin: 1px 0 3px !important;
+    padding: 2px 5px !important;
   }
   .arrest-print-document .critical-warning strong,
-  .arrest-print-document .critical-warning span { font-size: 5.8pt !important; line-height: 1.15 !important; }
-  .arrest-print-document .arrest-section { margin: 3px 0 4px !important; }
-  .arrest-print-document .arrest-section-heading { gap: 5px !important; margin-bottom: 2px !important; }
-  .arrest-print-document .arrest-section-heading > span {
-    border-radius: 3px !important;
-    font-size: 6pt !important;
-    height: 18px !important;
-    width: 18px !important;
+  .arrest-print-document .critical-warning span {
+    font-size: 4.9pt !important;
+    line-height: 1.08 !important;
   }
-  .arrest-print-document .arrest-section-heading small { font-size: 5.2pt !important; }
-  .arrest-print-document .arrest-section-heading h3 { font-size: 8.5pt !important; margin: 0 !important; }
+  .arrest-print-document .arrest-section {
+    break-inside: auto !important;
+    margin: 2px 0 3px !important;
+    page-break-inside: auto !important;
+  }
+  .arrest-print-document .arrest-section-heading {
+    break-after: avoid !important;
+    gap: 4px !important;
+    margin-bottom: 1px !important;
+    page-break-after: avoid !important;
+  }
+  .arrest-print-document .arrest-section-heading > span {
+    border-radius: 2px !important;
+    font-size: 5.2pt !important;
+    height: 15px !important;
+    width: 15px !important;
+  }
+  .arrest-print-document .arrest-section-heading small { font-size: 4.6pt !important; }
+  .arrest-print-document .arrest-section-heading h3 {
+    font-size: 7.2pt !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+  }
+  .arrest-print-document .dose-table {
+    min-width: 0 !important;
+    table-layout: fixed !important;
+    width: 100% !important;
+  }
   .arrest-print-document .dose-table th,
   .arrest-print-document .dose-table td {
-    font-size: 5.7pt !important;
+    font-size: 4.85pt !important;
     line-height: 1.02 !important;
     overflow-wrap: anywhere;
-    padding: 1.6px 2.5px !important;
+    padding: 1px 1.8px !important;
+    vertical-align: middle !important;
     word-break: normal;
   }
-  .arrest-print-document .dose-table thead th { font-size: 5.5pt !important; }
+  .arrest-print-document .dose-table thead th {
+    font-size: 4.55pt !important;
+    letter-spacing: 0 !important;
+  }
   .arrest-print-document .dose-table tbody th { min-width: 0 !important; width: 22%; }
+  .arrest-print-document .dose-table th:nth-child(2),
+  .arrest-print-document .dose-table td:nth-child(2) { width: 16%; }
+  .arrest-print-document .dose-table th:nth-child(3),
+  .arrest-print-document .dose-table td:nth-child(3) { width: 25%; }
+  .arrest-print-document .dose-table th:nth-child(4),
+  .arrest-print-document .dose-table td:nth-child(4) { width: 23%; }
+  .arrest-print-document .dose-table th:nth-child(5),
+  .arrest-print-document .dose-table td:nth-child(5) { width: 14%; }
+  .arrest-print-document .dose-table td small,
+  .arrest-print-document .dose-table th small {
+    font-size: 4.15pt !important;
+    line-height: 1 !important;
+    margin-top: 0 !important;
+  }
   .arrest-print-document .dose-table .dose-result {
-    font-size: 7pt !important;
+    font-size: 5.8pt !important;
     min-width: 0 !important;
     white-space: nowrap;
-    width: 10%;
   }
   .arrest-print-document .source-note { display: none !important; }
   a { color: inherit !important; text-decoration: none !important; }
