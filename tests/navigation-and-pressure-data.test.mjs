@@ -18,6 +18,7 @@ test("module shortcuts and page sections follow the approved order", async () =>
     'href="#antimicrobianos"',
     'href="#emergencia"',
     'href="#scores"',
+    'href="#npt"',
   ];
   const shortcutIndexes = shortcutOrder.map((token) => page.indexOf(token));
   assert.ok(shortcutIndexes.every((index) => index >= 0));
@@ -30,6 +31,7 @@ test("module shortcuts and page sections follow the approved order", async () =>
     'id="antimicrobianos"',
     'id="emergencia"',
     'id="scores"',
+    'id="npt"',
   ];
   const sectionIndexes = sectionOrder.map((token) => page.indexOf(token));
   assert.ok(sectionIndexes.every((index) => index >= 0));
@@ -42,6 +44,8 @@ test("module shortcuts and page sections follow the approved order", async () =>
   assert.match(page, /MEDICAMENTOS DE INFUSÃO CONTÍNUA/);
   assert.match(page, /Via oral · \{ORAL_ANTIBIOTICS.length\} opções/);
   assert.match(page, /<span>06<\/span><b>SCORES CLÍNICOS<\/b>/);
+  assert.match(page, /<span>07<\/span><b>NUTRIÇÃO PARENTERAL TOTAL<\/b>/);
+  assert.match(page, /MÓDULO 07 · NUTRIÇÃO/);
 });
 
 function parseExportedArray(sourceText, exportName) {

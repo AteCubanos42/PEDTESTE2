@@ -930,3 +930,83 @@ footer > div:last-child a, footer > div:last-child span { color: var(--teal); fo
   .arrest-print-document .source-note { display: none !important; }
   a { color: inherit !important; text-decoration: none !important; }
 }
+
+/* Módulo 07 · Nutrição parenteral */
+.npt-section { background: #f3efe4; border-top: 1px solid #d7cfbd; }
+.npt-module-card {
+  align-items: center;
+  background: #173b43;
+  border: 1px solid #0e2d34;
+  border-radius: 14px;
+  color: white;
+  display: grid;
+  gap: 24px;
+  grid-template-columns: auto 1fr auto;
+  margin: auto;
+  max-width: 1280px;
+  padding: 28px;
+}
+.npt-module-mark { align-items: center; background: var(--yellow); border: 2px solid #101f23; border-radius: 14px; color: var(--ink); display: flex; font-family: Georgia, serif; font-size: 27px; font-weight: 900; height: 82px; justify-content: center; width: 82px; }
+.npt-module-card .eyebrow { color: var(--teal); }
+.npt-module-card h3 { font-size: 24px; margin: 6px 0 8px; }
+.npt-module-card p { color: #b8c8c7; font-size: 12px; line-height: 1.55; margin: 0; }
+.npt-module-card button { background: var(--coral); border: 0; border-radius: 9px; color: white; cursor: pointer; font-size: 10px; font-weight: 900; letter-spacing: .08em; min-height: 54px; padding: 0 20px; }
+.npt-module-card button:hover { background: var(--teal); color: var(--ink); }
+.tool-modal:has(.npt-heading) { max-width: 1180px; }
+.npt-tabs { display: flex; gap: 8px; margin: 0 0 22px; }
+.npt-tabs button { background: transparent; border: 1px solid #b8c9c4; border-radius: 999px; color: var(--ink); cursor: pointer; font-size: 10px; font-weight: 900; letter-spacing: .07em; padding: 10px 15px; text-transform: uppercase; }
+.npt-tabs button.active { background: var(--ink); border-color: var(--ink); color: white; }
+.npt-input-section { background: #f2f6f4; border: 1px solid #cfddd8; border-radius: 12px; margin: 0 0 18px; padding: 18px; }
+.npt-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.npt-field small { min-height: 14px; }
+.npt-summary-grid { display: grid; gap: 1px; grid-template-columns: repeat(3, 1fr); margin: 22px 0; overflow: hidden; background: #b9cbc5; border: 1px solid #b9cbc5; border-radius: 12px; }
+.npt-summary-grid > div { background: #f4f8f6; display: flex; flex-direction: column; gap: 7px; min-height: 82px; padding: 16px; }
+.npt-summary-grid span { color: #657973; font-size: 8px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.npt-summary-grid strong { color: #173b43; font-size: 16px; }
+.npt-summary-grid .npt-summary-primary { background: #173b43; }
+.npt-summary-grid .npt-summary-primary span { color: var(--teal); }
+.npt-summary-grid .npt-summary-primary strong { color: white; }
+.npt-results-layout { display: grid; gap: 18px; grid-template-columns: 1.2fr .8fr; }
+.npt-composition, .npt-checks { border: 1px solid #cedbd6; border-radius: 12px; padding: 18px; }
+.npt-table-wrap { border: 1px solid #cfddd8; border-radius: 9px; overflow: hidden; }
+.npt-table { border-collapse: collapse; width: 100%; }
+.npt-table th, .npt-table td { border-bottom: 1px solid #dce5e1; font-size: 10px; padding: 9px 11px; text-align: left; }
+.npt-table thead th { background: #173b43; color: white; font-size: 8px; letter-spacing: .07em; text-transform: uppercase; }
+.npt-table td:last-child, .npt-table th:last-child { text-align: right; white-space: nowrap; }
+.npt-table tbody tr:nth-child(even) td { background: #f5f8f6; }
+.npt-table tr.invalid td { background: #fff0ec; color: #9b4034; font-weight: 900; }
+.npt-table tfoot th { background: #dff3ec; color: #174b42; font-size: 11px; }
+.npt-checks dl { display: grid; gap: 1px; margin: 0; overflow: hidden; border: 1px solid #cfddd8; border-radius: 9px; background: #cfddd8; }
+.npt-checks dl > div { background: #f5f8f6; display: grid; gap: 10px; grid-template-columns: 1fr auto; padding: 11px; }
+.npt-checks dt { color: #60736d; font-size: 9px; }
+.npt-checks dd { color: #173b43; font-size: 10px; font-weight: 900; margin: 0; text-align: right; }
+.warning-note { background: #fff7df; border: 1px solid #d9c17c; border-radius: 9px; color: #625429; font-size: 10px; line-height: 1.5; margin: 15px 0; padding: 13px 14px; }
+.warning-note strong { color: #806d27; }
+.npt-guide-intro { align-items: center; display: flex; gap: 20px; justify-content: space-between; margin-bottom: 18px; }
+.npt-guide-intro h3 { font-size: 22px; margin: 5px 0 0; }
+.npt-guide-intro a { background: var(--ink); border-radius: 8px; color: white; font-size: 9px; font-weight: 900; letter-spacing: .06em; padding: 13px 15px; text-decoration: none; text-transform: uppercase; }
+.npt-guide-grid { display: grid; gap: 10px; grid-template-columns: repeat(2, 1fr); margin-bottom: 18px; }
+.npt-guide-step { align-items: start; background: #f3f7f5; border: 1px solid #ccdad5; border-radius: 10px; display: grid; gap: 13px; grid-template-columns: auto 1fr; padding: 15px; }
+.npt-guide-step > span { align-items: center; background: var(--teal); border-radius: 7px; color: var(--ink); display: flex; font-size: 9px; font-weight: 900; height: 34px; justify-content: center; width: 34px; }
+.npt-guide-step h4 { font-size: 13px; margin: 0 0 6px; }
+.npt-guide-step p { color: #60736d; font-size: 10px; line-height: 1.5; margin: 0; }
+
+@media (max-width: 900px) {
+  .npt-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .npt-results-layout { grid-template-columns: 1fr; }
+  .npt-module-card { grid-template-columns: auto 1fr; }
+  .npt-module-card button { grid-column: 1 / -1; width: 100%; }
+}
+
+@media (max-width: 620px) {
+  .npt-grid, .npt-summary-grid, .npt-guide-grid { grid-template-columns: 1fr; }
+  .npt-module-card { grid-template-columns: 1fr; }
+  .npt-module-mark { height: 64px; width: 64px; }
+  .npt-guide-intro { align-items: stretch; flex-direction: column; }
+  .npt-guide-intro a { text-align: center; }
+  .npt-checks dl > div { grid-template-columns: 1fr; }
+  .npt-checks dd { text-align: left; }
+}
+.npt-guide-links { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.npt-guide-links a:last-child { background: var(--teal-dark); }
+@media (max-width: 620px) { .npt-guide-links { display: grid; justify-content: stretch; } }

@@ -144,3 +144,7 @@ As referências clínicas oficiais aparecem dentro da própria interface. Antes 
 - Apresentações líquidas IM exibidas como sem reconstituição.
 - Impressões de percentis de PA e folha de parada compactadas para uma folha A4 em paisagem.
 - A comparação opcional da pressão medida é ocultada apenas na impressão.
+
+## Módulo 07 - Nutrição parenteral total
+
+A versão inclui uma calculadora de NPT pediátrica baseada na planilha fornecida, com quota hídrica disponível, VIG, aminoácidos, lipídios, eletrólitos, oligoelementos, vitaminas, relação Ca:P, calorias, osmolaridade e composição copiável. O módulo também contém um guia resumido e disponibiliza o fluxograma em PDF e a planilha original na pasta `public`.

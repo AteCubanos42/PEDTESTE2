@@ -13,6 +13,7 @@ import { AntimicrobialCalculator } from "./AntimicrobialTools";
 import { ELECTROLYTE_TOOLS, ElectrolyteCalculator, type ElectrolyteToolId } from "./ElectrolyteTools";
 import { OralAntibioticCalculator } from "./OralAntibioticTools";
 import { BloodPressureCalculator, CardiacArrestCalculator } from "./EmergencyTools";
+import { NptCalculator } from "./NptTools";
 import type { BloodPressureSex } from "./blood-pressure-data";
 import { PrescriptionBlock } from "./PrescriptionBlock";
 import {
@@ -64,6 +65,7 @@ type ActiveTool =
   | { type: "oral-antibiotic"; antibiotic: OralAntibiotic }
   | { type: "blood-pressure" }
   | { type: "cardiac-arrest" }
+  | { type: "npt" }
   | null;
 
 const DRUGS: Drug[] = [
@@ -735,6 +737,7 @@ export default function Home() {
           <a href="#antimicrobianos">Antimicrobianos</a>
           <a className="nav-emergency" href="#emergencia">Folha de parada + PA</a>
           <a href="#scores">Scores</a>
+          <a href="#npt">NPT</a>
         </nav>
         <div className="header-tools">
           <a className="emergency-shortcut mobile-emergency-shortcut" href="#emergencia" aria-label="Ir para pressão arterial e folha de parada">
@@ -754,7 +757,7 @@ export default function Home() {
         <div className="hero-copy">
           <span className="eyebrow light">INTENSIVA PEDIÁTRICA · CÁLCULO À BEIRA-LEITO</span>
           <h1>PED <em>Calc.</em></h1>
-          <p>Vazões, diluições, correções hidroeletrolíticas, venóclise, scores e antimicrobianos hospitalares e domiciliares.</p>
+          <p>Vazões, diluições, correções hidroeletrolíticas, venóclise, scores, antimicrobianos e nutrição parenteral pediátrica.</p>
           <div className="hero-actions">
             <button className="primary-action" onClick={() => setActiveTool({ type: "maintenance" })}>Calcular venóclise <span>→</span></button>
             <a href="#antimicrobianos">Abrir antimicrobianos</a>
@@ -772,6 +775,7 @@ export default function Home() {
           <a href="#antimicrobianos"><span>04</span><b>ANTIMICROBIANOS</b><em>{ANTIMICROBIALS.length} hospitalares + {ORAL_ANTIBIOTICS.length} domiciliares</em></a>
           <a href="#emergencia"><span>05</span><b>FOLHA DE PARADA + PERCENTIL DE PRESSÃO</b><em>percentis masculino e feminino + folha pelo peso</em></a>
           <a href="#scores"><span>06</span><b>SCORES CLÍNICOS</b><em>instrumentos de avaliação pediátrica</em></a>
+          <a href="#npt"><span>07</span><b>NUTRIÇÃO PARENTERAL TOTAL</b><em>planilha de composição + guia de uso</em></a>
         </div>
       </section>
 
@@ -954,6 +958,23 @@ export default function Home() {
         </div>
       </section>
 
+
+      <section className="section npt-section" id="npt">
+        <div className="section-heading">
+          <div><span className="eyebrow">MÓDULO 07 · NUTRIÇÃO</span><h2>Nutrição parenteral total</h2></div>
+          <p>Planilha pediátrica de composição da NPT com quota hídrica, macronutrientes, eletrólitos, Ca:P, calorias e osmolaridade.</p>
+        </div>
+        <div className="npt-module-card">
+          <div className="npt-module-mark">NPT</div>
+          <div>
+            <span className="eyebrow">PLANILHA + FLUXOGRAMA</span>
+            <h3>Calcular e revisar a NPT em etapas</h3>
+            <p>Preencha o volume disponível e as metas prescritas. O guia interno resume o fluxograma e mantém o PDF completo acessível.</p>
+          </div>
+          <button onClick={() => setActiveTool({ type: "npt" })} type="button">ABRIR PLANILHA →</button>
+        </div>
+      </section>
+
       <footer>
         <div className="brand footer-brand"><span className="brand-mark">P+</span><span><strong>PED</strong><small>CALC</small></span></div>
         <p>Ferramenta independente de apoio matemático para profissionais habilitados.</p>
@@ -978,6 +999,7 @@ export default function Home() {
           {activeTool.type === "oral-antibiotic" ? <OralAntibioticCalculator antibiotic={activeTool.antibiotic} initialWeight={weight} /> : null}
           {activeTool.type === "blood-pressure" ? <BloodPressureCalculator initialSex={bloodPressureSex} onSexChange={setBloodPressureSex} /> : null}
           {activeTool.type === "cardiac-arrest" ? <CardiacArrestCalculator initialWeight={weight} /> : null}
+          {activeTool.type === "npt" ? <NptCalculator initialWeight={weight} /> : null}
         </ToolModal>
       ) : null}
     </main>
