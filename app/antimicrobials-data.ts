@@ -46,10 +46,19 @@ export type IvPreparationProfile = {
   verificationText?: string;
 };
 
-export type ImPreparationProfile = {
-  concentration?: number;
-  preparation: string;
-};
+export type ImPreparationProfile =
+  | {
+      kind: "solution";
+      stockConcentration: number;
+      preparation: string;
+    }
+  | {
+      kind: "powder";
+      vialAmount: number;
+      defaultDiluentVolume: 2 | 3 | 4;
+      diluentVolumes: readonly (2 | 3 | 4)[];
+      preparation: string;
+    };
 
 export type Antimicrobial = {
   id: string;
@@ -174,7 +183,7 @@ export const ANTIMICROBIALS: Antimicrobial[] = [
     infusion: "Administração IV lenta em 3–5 minutos.",
     observations: "O guia destaca 200 mg/kg/dia para meningite, endocardite e derrame pleural.",
     iv: ivPowder(1000, 10, direct(100), 3, 5),
-    im: { concentration: 250, preparation: "Reconstituir o frasco de 1 g com 4 mL de água bidestilada." },
+    im: { kind: "powder", vialAmount: 1000, defaultDiluentVolume: 4, diluentVolumes: [2, 3, 4], preparation: "Selecione 2, 3 ou 4 mL de água destilada; o protocolo fornecido usa 4 mL." },
     rules: [
       { id: "standard", label: "Faixa geral", population: "Pediátrica", basis: "day", doseMin: 150, doseMax: 200, unit: "mg", intervalHours: 6, maxDaily: 12000, route: "IV / IM" },
       { id: "high", label: "Meningite / endocardite / derrame pleural", population: "Situação destacada no guia", basis: "day", doseMin: 200, unit: "mg", intervalHours: 6, maxDaily: 12000, route: "IV / IM" },
@@ -195,7 +204,7 @@ export const ANTIMICROBIALS: Antimicrobial[] = [
     infusion: "30 minutos.",
     observations: "Para IM, o quadro cita 2–4 mL de água bidestilada ou 3,5 mL de lidocaína 1%; conferir apresentação e protocolo.",
     iv: ivPowder(1000, 10, diluted(peripheral(20), 4), 30, 30, diluted(central(40), 1.5)),
-    im: { preparation: "O guia oferece mais de um volume de reconstituição IM; informe a concentração final validada pela farmácia." },
+    im: { kind: "powder", vialAmount: 1000, defaultDiluentVolume: 4, diluentVolumes: [2, 3, 4], preparation: "Selecione 2, 3 ou 4 mL de água destilada e confira a apresentação utilizada." },
     rules: [{ id: "standard", label: "Faixa hospitalar", population: "Pediátrica", basis: "day", doseMin: 50, doseMax: 100, unit: "mg", intervalHours: 12, maxDaily: 4000, route: "IV / IM" }],
   },
   {
@@ -213,7 +222,7 @@ export const ANTIMICROBIALS: Antimicrobial[] = [
     infusion: "30 minutos.",
     observations: "Para IM, o quadro indica reconstituição com 3 mL de água bidestilada.",
     iv: ivPowder(500, 5, diluted(peripheral(20), 4), 30),
-    im: { concentration: 166.6667, preparation: "Reconstituir o frasco de 500 mg com 3 mL de água bidestilada." },
+    im: { kind: "powder", vialAmount: 500, defaultDiluentVolume: 3, diluentVolumes: [2, 3, 4], preparation: "Selecione 2, 3 ou 4 mL de água destilada; o protocolo fornecido usa 3 mL." },
     rules: [{ id: "standard", label: "Esquema hospitalar", population: "Pediátrica", basis: "day", doseMin: 200, unit: "mg", intervalHours: 4, maxDaily: 12000, route: "IV / IM" }],
   },
   {
@@ -231,7 +240,7 @@ export const ANTIMICROBIALS: Antimicrobial[] = [
     infusion: "30 minutos.",
     observations: "Para IM, usar a solução sem diluição e respeitar o volume máximo por músculo.",
     iv: ivSolution(150, diluted(peripheral(6), 25), 30),
-    im: { concentration: 150, preparation: "Usar a apresentação de 150 mg/mL sem diluição." },
+    im: { kind: "solution", stockConcentration: 150, preparation: "Usar a apresentação de 150 mg/mL sem reconstituição." },
     rules: [{ id: "standard", label: "Esquema hospitalar", population: "Pediátrica", basis: "day", doseMin: 30, unit: "mg", intervalHours: 8, maxDaily: 1800, route: "IV / IM" }],
   },
   {
@@ -249,7 +258,7 @@ export const ANTIMICROBIALS: Antimicrobial[] = [
     infusion: "60 minutos.",
     observations: "A rediluição de 2,5 volumes resulta em concentração próxima e inferior ao limite de 30 mg/mL. Para IM, confirmar o volume final após usar 2–3 mL de água bidestilada.",
     iv: ivPowder(1000, 10, diluted({ ...central(30), label: "Via intravenosa" }, 2.5), 60),
-    im: { preparation: "O guia oferece uma faixa de 2–3 mL para reconstituição IM; informe a concentração final validada." },
+    im: { kind: "powder", vialAmount: 1000, defaultDiluentVolume: 3, diluentVolumes: [2, 3, 4], preparation: "Selecione 2, 3 ou 4 mL de água destilada e confira a apresentação utilizada." },
     rules: [{ id: "standard", label: "Esquema hospitalar", population: "Pediátrica", basis: "day", doseMin: 150, unit: "mg", intervalHours: 8, maxDaily: 6000, route: "IV / IM" }],
   },
   {
@@ -267,7 +276,7 @@ export const ANTIMICROBIALS: Antimicrobial[] = [
     infusion: "60 minutos.",
     observations: "Para IM, usar sem diluição e respeitar o volume máximo por músculo.",
     iv: ivSolution(40, diluted({ ...central(10), label: "Via intravenosa" }, 3), 60),
-    im: { concentration: 40, preparation: "Usar a apresentação de 40 mg/mL sem diluição." },
+    im: { kind: "solution", stockConcentration: 40, preparation: "Usar a apresentação de 40 mg/mL sem reconstituição." },
     rules: [{ id: "standard", label: "Esquema hospitalar", population: "Pediátrica", basis: "day", doseMin: 5, unit: "mg", intervalHours: 24, maxDaily: 240, route: "IV / IM" }],
   },
   {
@@ -359,7 +368,7 @@ export const ANTIMICROBIALS: Antimicrobial[] = [
     infusion: "60 minutos.",
     observations: "Para IM, usar sem diluição e respeitar o volume máximo por músculo.",
     iv: ivSolution(250, diluted(peripheral(5), 50), 60, 60, diluted(central(10), 25)),
-    im: { concentration: 250, preparation: "Usar a apresentação de 250 mg/mL sem diluição." },
+    im: { kind: "solution", stockConcentration: 250, preparation: "Usar a apresentação de 250 mg/mL sem reconstituição." },
     rules: [{ id: "standard", label: "Esquema hospitalar", population: "Pediátrica", basis: "day", doseMin: 15, unit: "mg", intervalHours: 24, maxDaily: 1000, route: "IV / IM" }],
   },
   {
@@ -377,7 +386,7 @@ export const ANTIMICROBIALS: Antimicrobial[] = [
     infusion: "60 minutos.",
     observations: "Para IM, usar sem diluição e respeitar o volume máximo por músculo.",
     iv: ivSolution(50, diluted(peripheral(5), 10), 60, 60, diluted(central(10), 5)),
-    im: { concentration: 50, preparation: "Usar a apresentação de 50 mg/mL sem diluição." },
+    im: { kind: "solution", stockConcentration: 50, preparation: "Usar a apresentação de 50 mg/mL sem reconstituição." },
     rules: [{ id: "standard", label: "Esquema hospitalar", population: "Pediátrica", basis: "day", doseMin: 15, unit: "mg", intervalHours: 24, maxDaily: 1000, route: "IV / IM" }],
   },
   {

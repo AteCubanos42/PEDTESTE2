@@ -29,7 +29,12 @@ import {
 } from "./oral-antibiotics-data";
 import { SCORE_CATEGORIES, SCORE_DEFINITIONS, type ScoreDefinition } from "./scores-data";
 
-type DrugGroup = "Analgossedação" | "Vasoativas" | "Outras drogas";
+type DrugGroup =
+  | "Analgossedação"
+  | "Vasoativas"
+  | "Broncodilatadores"
+  | "Diuréticos"
+  | "Anticoagulantes";
 
 type Drug = {
   id: string;
@@ -79,17 +84,19 @@ const DRUGS: Drug[] = [
   { id: "nitroprusside", name: "Nitroprussiato de sódio", group: "Vasoativas", unit: "mcg", interval: "min", range: "1–10 mcg/kg/min", stock: 25000, stockLabel: "25 mg/mL" },
   { id: "alprostadil", name: "Prostaglandina E1", group: "Vasoativas", unit: "mcg", interval: "min", range: "0,01–0,05 mcg/kg/min", stock: 500, stockLabel: "500 mcg/mL" },
   { id: "levosimendan", name: "Levosimendana", group: "Vasoativas", unit: "mcg", interval: "min", range: "0,05–0,2 mcg/kg/min", stock: 2500, stockLabel: "2,5 mg/mL" },
-  { id: "salbutamol", name: "Salbutamol", group: "Outras drogas", unit: "mcg", interval: "min", range: "1–10 mcg/kg/min", stock: 1000, stockLabel: "1 mg/mL" },
-  { id: "magnesium", name: "Sulfato de magnésio", group: "Outras drogas", unit: "mg", interval: "h", range: "Dose definida pelo protocolo", stock: 500, stockLabel: "500 mg/mL" },
-  { id: "terbutaline", name: "Terbutalina", group: "Outras drogas", unit: "mcg", interval: "min", range: "0,1–2 mcg/kg/min", stock: 500, stockLabel: "500 mcg/mL" },
-  { id: "furosemide", name: "Furosemida", group: "Outras drogas", unit: "mg", interval: "h", range: "0,1–0,5 mg/kg/h", stock: 10, stockLabel: "10 mg/mL" },
-  { id: "heparin", name: "Heparina não fracionada", group: "Outras drogas", unit: "UI", interval: "h", range: "10–25 UI/kg/h", stock: 5000, stockLabel: "5.000 UI/mL" },
+  { id: "salbutamol", name: "Salbutamol", group: "Broncodilatadores", unit: "mcg", interval: "min", range: "1–10 mcg/kg/min", stock: 1000, stockLabel: "1 mg/mL" },
+  { id: "magnesium", name: "Sulfato de magnésio", group: "Broncodilatadores", unit: "mg", interval: "h", range: "Dose definida pelo protocolo", stock: 500, stockLabel: "500 mg/mL" },
+  { id: "terbutaline", name: "Terbutalina", group: "Broncodilatadores", unit: "mcg", interval: "min", range: "0,1–2 mcg/kg/min", stock: 500, stockLabel: "500 mcg/mL" },
+  { id: "furosemide", name: "Furosemida", group: "Diuréticos", unit: "mg", interval: "h", range: "0,1–0,5 mg/kg/h", stock: 10, stockLabel: "10 mg/mL" },
+  { id: "heparin", name: "Heparina não fracionada", group: "Anticoagulantes", unit: "UI", interval: "h", range: "10–25 UI/kg/h", stock: 5000, stockLabel: "5.000 UI/mL" },
 ];
 
 const GROUP_META: Record<DrugGroup, { icon: string; description: string }> = {
   Analgossedação: { icon: "A", description: "Sedação, analgesia e bloqueio neuromuscular" },
   Vasoativas: { icon: "V", description: "Inotrópicos, vasopressores e vasodilatadores" },
-  "Outras drogas": { icon: "O", description: "Asma, diuréticos e anticoagulação" },
+  Broncodilatadores: { icon: "B", description: "Broncodilatação e terapias adjuvantes" },
+  Diuréticos: { icon: "D", description: "Diurese contínua e associações protocoladas" },
+  Anticoagulantes: { icon: "H", description: "Anticoagulação por infusão contínua" },
 };
 
 function number(value: string) {
@@ -558,7 +565,7 @@ function MagnesiumInfusionCalculator({ initialWeight }: { initialWeight: string 
 
   return (
     <>
-      <ToolHeading eyebrow="Outras drogas" title="Sulfato de magnésio" description="Preparo de ataque por 5 horas ou manutenção contínua por 24 horas." />
+      <ToolHeading eyebrow="Broncodilatadores" title="Sulfato de magnésio" description="Preparo de ataque por 5 horas ou manutenção contínua por 24 horas." />
       <div className="segmented">
         <button className={mode === "attack" ? "active" : ""} onClick={() => changeMode("attack")}>Ataque · 5 h</button>
         <button className={mode === "maintenance" ? "active" : ""} onClick={() => changeMode("maintenance")}>Manutenção · 24 h</button>
@@ -642,7 +649,7 @@ function DualDiureticCalculator({ initialWeight }: { initialWeight: string }) {
   ].join("\n");
   return (
     <>
-      <ToolHeading eyebrow="Outras drogas" title="Furosemida + aminofilina" description="Preparo matemático de uma solução dupla para 24 horas." />
+      <ToolHeading eyebrow="Diuréticos" title="Furosemida + aminofilina" description="Preparo matemático de uma solução dupla para 24 horas." />
       <div className="form-grid two">
         <Field label="Peso" value={weight} onChange={setWeight} suffix="kg" />
         <Field label="Volume final" value={finalVolume} onChange={setFinalVolume} suffix="mL" />
@@ -698,7 +705,7 @@ export default function Home() {
   }, [group, search]);
   const normalizedSearch = search.trim().toLocaleLowerCase("pt-BR");
   const plainSearch = normalizedSearch.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  const showDual = (group === "Todos" || group === "Outras drogas") && (!normalizedSearch || "furosemida aminofilina".includes(normalizedSearch));
+  const showDual = (group === "Todos" || group === "Diuréticos") && (!normalizedSearch || "furosemida aminofilina".includes(normalizedSearch));
   const showNitric = (group === "Todos" || group === "Vasoativas") && (!plainSearch || "oxido nitrico nitric oxide".includes(plainSearch));
   const filteredAntimicrobials = useMemo(() => {
     const query = antimicrobialSearch.trim().toLocaleLowerCase("pt-BR").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -801,7 +808,7 @@ export default function Home() {
         <div className="section-heading inverse"><div><span className="eyebrow light">MÓDULO 03</span><h2>Medicamentos de Infusão Contínua</h2></div><p>Calcule vazão ou reconstrua a dose a partir da bomba.</p></div>
         <div className="toolbar">
           <div className="group-tabs" role="tablist" aria-label="Grupos de medicamentos">
-            {(["Todos", "Analgossedação", "Vasoativas", "Outras drogas"] as const).map((item) => <button className={group === item ? "active" : ""} key={item} onClick={() => setGroup(item)}>{item}</button>)}
+            {(["Todos", "Analgossedação", "Vasoativas", "Broncodilatadores", "Diuréticos", "Anticoagulantes"] as const).map((item) => <button className={group === item ? "active" : ""} key={item} onClick={() => setGroup(item)}>{item}</button>)}
           </div>
           <label className="search-box"><span>⌕</span><input aria-label="Buscar medicamento" onChange={(e) => setSearch(e.target.value)} placeholder="Buscar medicamento" value={search} /></label>
         </div>
@@ -815,8 +822,8 @@ export default function Home() {
             </button>
           ))}
           {showDual ? (
-            <button className="drug-card" data-group="Outras drogas" onClick={() => setActiveTool({ type: "dual" })}>
-              <span className="drug-number">23</span><span className="drug-letter">O</span><span><strong>Furosemida + aminofilina</strong><small>Solução dupla por doses-alvo</small></span><b>→</b>
+            <button className="drug-card" data-group="Diuréticos" onClick={() => setActiveTool({ type: "dual" })}>
+              <span className="drug-number">23</span><span className="drug-letter">D</span><span><strong>Furosemida + aminofilina</strong><small>Solução dupla por doses-alvo</small></span><b>→</b>
             </button>
           ) : null}
           {showNitric ? (

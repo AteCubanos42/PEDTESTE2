@@ -127,7 +127,7 @@ export function BloodPressureCalculator({ initialSex = "masculino", onSexChange 
     : "—";
 
   return (
-    <>
+    <div className="print-document bp-print-document">
       <header className="tool-heading emergency-heading">
         <span className="eyebrow">PA PEDIÁTRICA</span>
         <h2>Percentis de pressão arterial</h2>
@@ -137,9 +137,15 @@ export function BloodPressureCalculator({ initialSex = "masculino", onSexChange 
       <div className="print-toolbar print-hidden">
         <div>
           <strong>Impressão rápida</strong>
-          <span>Imprime a idade, o sexo selecionado, as referências vitais, a tabela de percentis e a comparação preenchida.</span>
+          <span>Imprime a idade, o sexo selecionado, as referências vitais e a tabela de percentis em uma única folha.</span>
         </div>
         <button onClick={() => window.print()} type="button">Imprimir percentis de pressão</button>
+      </div>
+
+      <div className="print-only print-summary">
+        <strong>IDADE: {age} {unit.toLocaleUpperCase("pt-BR")}</strong>
+        <span>SEXO: {sex.toLocaleUpperCase("pt-BR")}</span>
+        <span>REFERÊNCIA: {reference?.label ?? "—"}</span>
       </div>
 
       <div className="form-grid four emergency-inputs">
@@ -232,7 +238,7 @@ export function BloodPressureCalculator({ initialSex = "masculino", onSexChange 
           ) : null}
         </>
       ) : null}
-    </>
+    </div>
   );
 }
 
@@ -318,9 +324,6 @@ export function CardiacArrestCalculator({ initialWeight }: { initialWeight: stri
       `PESO: ${fmt(weightNumber, 2)} KG`,
       "",
       section("MEDICAÇÕES DE URGÊNCIA", rows.emergency),
-      "",
-      "ADRENALINA ENDOTRAQUEAL: NÃO AUTOMATIZADA — HÁ DIVERGÊNCIA ENTRE A DOSE MÁXIMA DESCRITA E A FÓRMULA DA PLANILHA ORIGINAL; REVISAR PROTOCOLO.",
-      "",
       section("FV / TV SEM PULSO", rows.shock),
       "",
       section("SEQUÊNCIA RÁPIDA DE INTUBAÇÃO", rows.rsi),
@@ -333,7 +336,7 @@ export function CardiacArrestCalculator({ initialWeight }: { initialWeight: stri
   };
 
   return (
-    <>
+    <div className="print-document arrest-print-document">
       <header className="tool-heading emergency-heading">
         <span className="eyebrow">EMERGÊNCIA PEDIÁTRICA</span>
         <h2>Folha de parada</h2>
@@ -361,7 +364,6 @@ export function CardiacArrestCalculator({ initialWeight }: { initialWeight: stri
       <section className="arrest-section">
         <div className="arrest-section-heading"><span>01</span><div><small>SUPORTE E REVERSÃO</small><h3>Medicações de urgência</h3></div></div>
         <DoseTable rows={rows.emergency} />
-        <div className="formula-conflict-note"><strong>Adrenalina endotraqueal:</strong> não foi automatizada porque a planilha original apresenta divergência entre a dose máxima escrita e a fórmula da célula. A via IV/IO está destacada conforme o algoritmo AHA/AAP 2025.</div>
       </section>
 
       <section className="arrest-section">
@@ -378,6 +380,6 @@ export function CardiacArrestCalculator({ initialWeight }: { initialWeight: stri
         <strong>Fontes:</strong> planilha “parada nova (ped)” fornecida pelo usuário. Epinefrina IV/IO, desfibrilação, amiodarona e lidocaína foram comparadas ao algoritmo oficial AHA/AAP 2025. Os demais itens devem ser validados no protocolo institucional antes do uso.
         <a href="https://cpr.heart.org/-/media/CPR-Files/CPR-Guidelines-Files/2025-Algorithms/Algorithm-PALS-CA-250123.pdf" rel="noreferrer" target="_blank">Abrir algoritmo oficial</a>
       </div>
-    </>
+    </div>
   );
 }

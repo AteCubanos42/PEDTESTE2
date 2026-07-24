@@ -154,3 +154,50 @@ test("pressure and arrest tools expose one-click print actions and print-only la
   assert.match(css, /@page \{ size: A4 landscape/);
   assert.match(css, /\.modal-close, \.print-hidden/);
 });
+
+test("continuous infusion drugs are split into the requested clinical categories", async () => {
+  const page = await source("app/page.tsx");
+  const css = await source("app/globals.css");
+
+  assert.doesNotMatch(page, /Outras drogas/);
+  assert.match(page, /Broncodilatadores/);
+  assert.match(page, /Diuréticos/);
+  assert.match(page, /Anticoagulantes/);
+  assert.match(page, /name: "Salbutamol", group: "Broncodilatadores"/);
+  assert.match(page, /name: "Sulfato de magnésio", group: "Broncodilatadores"/);
+  assert.match(page, /name: "Terbutalina", group: "Broncodilatadores"/);
+  assert.match(page, /name: "Furosemida", group: "Diuréticos"/);
+  assert.match(page, /name: "Heparina não fracionada", group: "Anticoagulantes"/);
+  assert.match(page, /data-group="Diuréticos" onClick=\{\(\) => setActiveTool\(\{ type: "dual" \}\)\}/);
+  assert.match(css, /data-group="Broncodilatadores"/);
+  assert.match(css, /data-group="Diuréticos"/);
+  assert.match(css, /data-group="Anticoagulantes"/);
+});
+
+test("IM antimicrobial preparation uses selectable water volume instead of manual mg per mL", async () => {
+  const builder = await source("app/AntimicrobialPrescription.tsx");
+  const data = await source("app/antimicrobials-data.ts");
+
+  assert.match(builder, /Reconstituição para via IM/);
+  assert.match(builder, /\+ \{volume\} mL de água destilada/);
+  assert.match(builder, /imProfile\.vialAmount \/ selectedImDiluentVolume/);
+  assert.match(builder, /CONCENTRAÇÃO RESULTANTE/);
+  assert.match(builder, /VOLUME POR DOSE IM/);
+  assert.doesNotMatch(builder, /Concentração final para IM/);
+  assert.match(builder, /SEM RECONSTITUIÇÃO/);
+  assert.match(data, /kind: "powder", vialAmount: 1000, defaultDiluentVolume: 4, diluentVolumes: \[2, 3, 4\]/);
+  assert.match(data, /kind: "solution", stockConcentration: 150/);
+});
+
+test("emergency print layouts fit one A4 sheet and omit nonessential PA comparison", async () => {
+  const emergency = await source("app/EmergencyTools.tsx");
+  const css = await source("app/globals.css");
+
+  assert.doesNotMatch(emergency, /formula-conflict-note/);
+  assert.match(css, /height: 199mm/);
+  assert.match(css, /\.bp-print-document \.measurement-check \{ display: none !important; \}/);
+  assert.match(css, /\.arrest-print-document \.source-note \{ display: none !important; \}/);
+  assert.match(css, /\.arrest-print-document \.dose-table th/);
+  assert.match(emergency, /print-document bp-print-document/);
+  assert.match(emergency, /print-document arrest-print-document/);
+});

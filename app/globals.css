@@ -306,7 +306,9 @@ a { color: inherit; }
 .drug-number { align-self: start; color: #64828a; font-size: 8px; font-weight: 900; }
 .drug-letter { align-items: center; background: var(--teal); border-radius: 7px; color: var(--ink); display: flex; font-size: 12px; font-weight: 900; height: 38px; justify-content: center; width: 38px; }
 .drug-card[data-group="Vasoativas"] .drug-letter { background: var(--coral); }
-.drug-card[data-group="Outras drogas"] .drug-letter { background: var(--blue); }
+.drug-card[data-group="Broncodilatadores"] .drug-letter { background: var(--blue); }
+.drug-card[data-group="Diuréticos"] .drug-letter { background: #d6b56f; color: #26353a; }
+.drug-card[data-group="Anticoagulantes"] .drug-letter { background: #b7ced2; color: #17343b; }
 .drug-card > span:nth-child(3) { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .drug-card strong { font-size: 13px; }
 .drug-card small { color: #91aaad; font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -754,6 +756,7 @@ footer > div:last-child a, footer > div:last-child span { color: var(--teal); fo
 .estimated-percentile-note strong { color: #806d27; }
 .emergency-source-note { align-items: flex-start; display: flex; flex-wrap: wrap; gap: 5px; }
 .emergency-source-note a { color: var(--teal-dark); font-weight: 900; margin-left: auto; }
+.print-only { display: none; }
 .print-toolbar { align-items: center; background: #eef3f1; border: 1px solid #d1ddd7; border-radius: 10px; display: flex; gap: 18px; justify-content: space-between; margin: 0 0 22px; padding: 14px 16px; }
 .print-toolbar div { display: grid; gap: 4px; }
 .print-toolbar strong { color: var(--ink); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
@@ -793,24 +796,137 @@ footer > div:last-child a, footer > div:last-child span { color: var(--teal); fo
 
 
 @media print {
-  @page { size: A4 landscape; margin: 8mm; }
-  html, body { background: #fff !important; }
+  @page { size: A4 landscape; margin: 5mm; }
+  html, body { background: #fff !important; height: auto !important; }
   body { margin: 0 !important; }
   main > :not(.modal-layer) { display: none !important; }
-  .modal-layer { backdrop-filter: none !important; background: #fff !important; display: block !important; inset: auto !important; overflow: visible !important; padding: 0 !important; position: static !important; }
-  .tool-modal { border-radius: 0 !important; box-shadow: none !important; margin: 0 !important; max-width: none !important; min-height: 0 !important; padding: 0 !important; width: 100% !important; }
+  .modal-layer {
+    backdrop-filter: none !important;
+    background: #fff !important;
+    display: block !important;
+    inset: auto !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    position: static !important;
+  }
+  .tool-modal {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
   .modal-close, .print-hidden { display: none !important; }
-  .tool-heading { margin-bottom: 12px !important; padding-right: 0 !important; }
-  .tool-heading h2 { font-size: 22pt !important; }
-  .form-grid, .vital-reference-strip, .measurement-results, .critical-warning, .estimated-percentile-note, .source-note, .arrest-section-heading { break-inside: avoid; page-break-inside: avoid; }
+  .print-only { display: flex !important; }
+  .print-document {
+    box-sizing: border-box;
+    height: 199mm;
+    max-height: 199mm;
+    overflow: hidden;
+    width: 100%;
+  }
+  .tool-heading {
+    margin: 0 0 4px !important;
+    padding-right: 0 !important;
+  }
+  .tool-heading .eyebrow { font-size: 6.5pt !important; }
+  .tool-heading h2 { font-size: 15pt !important; line-height: 1.05 !important; margin: 1px 0 0 !important; }
+  .tool-heading p { display: none !important; }
+  .print-summary {
+    align-items: center;
+    background: #eef4f5 !important;
+    border: 1px solid #b9cbd2;
+    gap: 14px;
+    justify-content: flex-start;
+    margin: 3px 0 5px;
+    padding: 4px 7px;
+  }
+  .print-summary strong, .print-summary span { color: #17343b; font-size: 7pt; }
+  .form-grid, .vital-reference-strip, .critical-warning, .estimated-percentile-note, .source-note, .arrest-section-heading {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
   .bp-table-wrap, .dose-table-wrap { overflow: visible !important; }
-  .clinical-table { width: 100% !important; }
-  .dose-table { font-size: 8pt !important; min-width: 0 !important; table-layout: fixed; }
-  .dose-table th, .dose-table td { padding: 5px 6px !important; word-break: normal; overflow-wrap: anywhere; }
-  .dose-table tbody th { min-width: 0 !important; }
-  .dose-table .dose-result { font-size: 10pt !important; min-width: 0 !important; }
-  .arrest-section { margin: 12px 0 16px !important; }
-  .arrest-weight-panel { break-inside: avoid; grid-template-columns: 1fr !important; margin: 10px 0 !important; padding: 10px !important; }
+  .clinical-table { min-width: 0 !important; table-layout: fixed; width: 100% !important; }
   .clinical-table tr { break-inside: avoid; page-break-inside: avoid; }
+  .clinical-table thead th { font-size: 6.5pt !important; padding: 3px 4px !important; }
+  .clinical-table tbody th, .clinical-table tbody td {
+    font-size: 6.6pt !important;
+    line-height: 1.08 !important;
+    padding: 2.5px 4px !important;
+  }
+  .clinical-table td small, .clinical-table th small { font-size: 5.6pt !important; margin-top: 1px !important; }
+  .bp-print-document .emergency-inputs { display: none !important; }
+  .bp-print-document .measurement-check { display: none !important; }
+  .bp-print-document .vital-reference-strip {
+    gap: 1px;
+    grid-template-columns: repeat(4, 1fr) !important;
+    margin: 4px 0 !important;
+  }
+  .bp-print-document .vital-reference-strip > div { gap: 2px; min-height: 0 !important; padding: 4px 6px !important; }
+  .bp-print-document .vital-reference-strip span { font-size: 5.7pt !important; }
+  .bp-print-document .vital-reference-strip strong { font-size: 8pt !important; }
+  .bp-print-document .estimated-percentile-note {
+    font-size: 6.2pt !important;
+    line-height: 1.2 !important;
+    margin: 3px 0 !important;
+    padding: 4px 6px !important;
+  }
+  .bp-print-document .bp-table tbody td { font-size: 11pt !important; padding: 4px 7px !important; }
+  .bp-print-document .bp-table tbody th { font-size: 8pt !important; padding: 4px 7px !important; }
+  .bp-print-document .source-note {
+    font-size: 6pt !important;
+    line-height: 1.2 !important;
+    margin-top: 4px !important;
+    padding: 4px 6px !important;
+  }
+  .arrest-print-document .arrest-weight-panel {
+    background: #eef3f1 !important;
+    border: 1px solid #d1ddd7 !important;
+    display: block !important;
+    margin: 2px 0 4px !important;
+    padding: 4px 7px !important;
+  }
+  .arrest-print-document .arrest-weight-panel .field { display: grid; grid-template-columns: auto 110px; gap: 8px; align-items: center; }
+  .arrest-print-document .arrest-weight-panel .field-label { font-size: 6.5pt !important; }
+  .arrest-print-document .arrest-weight-panel input { font-size: 8pt !important; min-height: 24px !important; padding: 2px 5px !important; }
+  .arrest-print-document .critical-warning {
+    gap: 6px !important;
+    grid-template-columns: auto 1fr !important;
+    margin: 2px 0 4px !important;
+    padding: 3px 6px !important;
+  }
+  .arrest-print-document .critical-warning strong,
+  .arrest-print-document .critical-warning span { font-size: 5.8pt !important; line-height: 1.15 !important; }
+  .arrest-print-document .arrest-section { margin: 3px 0 4px !important; }
+  .arrest-print-document .arrest-section-heading { gap: 5px !important; margin-bottom: 2px !important; }
+  .arrest-print-document .arrest-section-heading > span {
+    border-radius: 3px !important;
+    font-size: 6pt !important;
+    height: 18px !important;
+    width: 18px !important;
+  }
+  .arrest-print-document .arrest-section-heading small { font-size: 5.2pt !important; }
+  .arrest-print-document .arrest-section-heading h3 { font-size: 8.5pt !important; margin: 0 !important; }
+  .arrest-print-document .dose-table th,
+  .arrest-print-document .dose-table td {
+    font-size: 5.7pt !important;
+    line-height: 1.02 !important;
+    overflow-wrap: anywhere;
+    padding: 1.6px 2.5px !important;
+    word-break: normal;
+  }
+  .arrest-print-document .dose-table thead th { font-size: 5.5pt !important; }
+  .arrest-print-document .dose-table tbody th { min-width: 0 !important; width: 22%; }
+  .arrest-print-document .dose-table .dose-result {
+    font-size: 7pt !important;
+    min-width: 0 !important;
+    white-space: nowrap;
+    width: 10%;
+  }
+  .arrest-print-document .source-note { display: none !important; }
   a { color: inherit !important; text-decoration: none !important; }
 }

@@ -137,7 +137,9 @@ export function AntimicrobialPrescriptionBuilder({
   const [reconstitutionVolume, setReconstitutionVolume] = useState(iv.reconstitutionVolume ? String(iv.reconstitutionVolume) : "");
   const [stockConcentration, setStockConcentration] = useState(iv.stockConcentration ? String(iv.stockConcentration) : "");
   const [finalVolume, setFinalVolume] = useState(Number.isFinite(initialDose) ? String(suggestedVolume({ dose: initialDose, stockConcentration: initialStockConcentration, profile: initialAccessProfile })) : "");
-  const [imConcentration, setImConcentration] = useState(antimicrobial.im?.concentration ? String(antimicrobial.im.concentration) : "");
+  const [imDiluentVolume, setImDiluentVolume] = useState(
+    antimicrobial.im?.kind === "powder" ? String(antimicrobial.im.defaultDiluentVolume) : "",
+  );
   const [reconstitutionDiluent, setReconstitutionDiluent] = useState(iv.reconstitutionDiluent ?? "ÁGUA BIDESTILADA");
   const [diluent, setDiluent] = useState<string>(preferredDiluent(initialAccessProfile));
   const [infusionMinutes, setInfusionMinutes] = useState(String(iv.infusionMin));
@@ -164,10 +166,19 @@ export function AntimicrobialPrescriptionBuilder({
   const finalConcentration = administeredIvDose / final;
   const suggestedFinalVolume = suggestedVolume({ dose, stockConcentration: concentrationAfterPreparation, profile: accessProfile });
   const time = parseNumber(infusionMinutes);
-  const imStock = parseNumber(imConcentration);
+  const imProfile = antimicrobial.im;
+  const selectedImDiluentVolume = parseNumber(imDiluentVolume);
+  const imStock = imProfile?.kind === "solution"
+    ? imProfile.stockConcentration
+    : imProfile?.kind === "powder"
+      ? imProfile.vialAmount / selectedImDiluentVolume
+      : Number.NaN;
   const exactImVolume = dose / imStock;
   const imVolume = roundToTenth(exactImVolume);
   const administeredImDose = imVolume * imStock;
+  const imPreparationValid = imProfile?.kind === "solution"
+    || (imProfile?.kind === "powder"
+      && imProfile.diluentVolumes.includes(selectedImDiluentVolume as 2 | 3 | 4));
   const vialsNeeded = iv.kind === "powder" && Number.isFinite(vial) && vial > 0 ? Math.ceil(dose / vial) : 0;
   const directAdministration = accessProfile.concentrationKind === "direct";
   const concentrationValid = directAdministration
@@ -200,7 +211,8 @@ export function AntimicrobialPrescriptionBuilder({
     && timeValid
     && diluentValid
     && verificationValid;
-  const imValid = Boolean(antimicrobial.im)
+  const imValid = Boolean(imProfile)
+    && imPreparationValid
     && doseInRange
     && Number.isFinite(imStock)
     && imStock > 0
@@ -242,12 +254,19 @@ export function AntimicrobialPrescriptionBuilder({
         `DOSE: ${formatNumber(administeredIvDose, rule.unit === "UI" ? 0 : 1)} ${unit} IV.`,
       ];
 
-  const imLines = [
-    `${antimicrobial.name.toLocaleUpperCase("pt-BR")} (${formatNumber(imStock, 3)} ${unit}/ML).`,
-    antimicrobial.im?.preparation.toLocaleUpperCase("pt-BR") ?? "CONFIRMAR PREPARO IM.",
-    `ASPIRAR E ADMINISTRAR ${formatNumber(imVolume)} ML IM, ${frequency}.`,
-    `DOSE: ${formatNumber(administeredImDose, rule.unit === "UI" ? 0 : 1)} ${unit}.`,
-  ];
+  const imLines = imProfile?.kind === "powder"
+    ? [
+        `${antimicrobial.name.toLocaleUpperCase("pt-BR")} — ${String(Math.ceil(dose / imProfile.vialAmount)).padStart(2, "0")} FA DE ${formatNumber(imProfile.vialAmount, rule.unit === "UI" ? 0 : 1)} ${unit}.`,
+        `RECONSTITUIR CADA FA + ÁGUA DESTILADA ${formatNumber(selectedImDiluentVolume)} ML (${formatNumber(imStock, 3)} ${unit}/ML).`,
+        `ASPIRAR E ADMINISTRAR ${formatNumber(imVolume)} ML IM, ${frequency}.`,
+        `DOSE: ${formatNumber(administeredImDose, rule.unit === "UI" ? 0 : 1)} ${unit}.`,
+      ]
+    : [
+        `${antimicrobial.name.toLocaleUpperCase("pt-BR")} (${formatNumber(imStock, 3)} ${unit}/ML).`,
+        "SEM RECONSTITUIÇÃO.",
+        `ASPIRAR E ADMINISTRAR ${formatNumber(imVolume)} ML IM, ${frequency}.`,
+        `DOSE: ${formatNumber(administeredImDose, rule.unit === "UI" ? 0 : 1)} ${unit}.`,
+      ];
 
   const prescription = (route === "IV" ? ivLines : imLines).join("\n");
 
@@ -261,12 +280,33 @@ export function AntimicrobialPrescriptionBuilder({
 
       {route === "IM" ? (
         <>
-          <div className="form-grid two antimicrobial-builder-grid">
-            <InputField helper={antimicrobial.im?.preparation ?? "Confirme o preparo IM com a farmácia clínica."} label="Concentração final para IM" onChange={setImConcentration} suffix={`${unit}/mL`} value={imConcentration} />
-            <div className="derived-field"><span>VOLUME POR DOSE IM</span><strong>{formatNumber(imVolume)} mL</strong></div>
-            <div className="derived-field"><span>DOSE APÓS ARREDONDAMENTO</span><strong>{formatNumber(administeredImDose, rule.unit === "UI" ? 0 : 1)} {unit}</strong></div>
-          </div>
-          <div className="clinical-note"><strong>Via IM:</strong> respeite o volume máximo permitido por músculo e a apresentação efetivamente disponível.</div>
+          {imProfile?.kind === "powder" ? (
+            <div className="form-grid three antimicrobial-builder-grid">
+              <label className="field">
+                <span className="field-label">Reconstituição para via IM</span>
+                <span className="select-wrap">
+                  <select onChange={(event) => setImDiluentVolume(event.target.value)} value={imDiluentVolume}>
+                    {imProfile.diluentVolumes.map((volume) => (
+                      <option key={volume} value={volume}>+ {volume} mL de água destilada</option>
+                    ))}
+                  </select>
+                </span>
+                <small>{imProfile.preparation}</small>
+              </label>
+              <div className="derived-field"><span>CONTEÚDO DO FRASCO</span><strong>{formatNumber(imProfile.vialAmount, rule.unit === "UI" ? 0 : 1)} {unit}</strong></div>
+              <div className="derived-field"><span>CONCENTRAÇÃO RESULTANTE</span><strong>{formatNumber(imStock, 3)} {unit}/mL</strong></div>
+              <div className="derived-field"><span>VOLUME POR DOSE IM</span><strong>{formatNumber(imVolume)} mL</strong></div>
+              <div className="derived-field"><span>DOSE APÓS ARREDONDAMENTO</span><strong>{formatNumber(administeredImDose, rule.unit === "UI" ? 0 : 1)} {unit}</strong></div>
+            </div>
+          ) : (
+            <div className="form-grid three antimicrobial-builder-grid">
+              <div className="derived-field"><span>RECONSTITUIÇÃO IM</span><strong>SEM RECONSTITUIÇÃO</strong><small>{imProfile?.preparation}</small></div>
+              <div className="derived-field"><span>CONCENTRAÇÃO DISPONÍVEL</span><strong>{formatNumber(imStock, 3)} {unit}/mL</strong></div>
+              <div className="derived-field"><span>VOLUME POR DOSE IM</span><strong>{formatNumber(imVolume)} mL</strong></div>
+              <div className="derived-field"><span>DOSE APÓS ARREDONDAMENTO</span><strong>{formatNumber(administeredImDose, rule.unit === "UI" ? 0 : 1)} {unit}</strong></div>
+            </div>
+          )}
+          <div className="clinical-note"><strong>Via IM:</strong> confirme o volume final efetivamente obtido após a reconstituição, a apresentação disponível e o volume máximo permitido por músculo.</div>
         </>
       ) : (
         <>
@@ -310,6 +350,7 @@ export function AntimicrobialPrescriptionBuilder({
 
       {!doseInRange ? <div className="danger-note">A dose final precisa ficar dentro da faixa calculada para o esquema selecionado.</div> : null}
       {route === "IV" && doseInRange && !ivDoseAfterRoundingValid ? <div className="danger-note">Com uma casa decimal, o volume aspirado altera a dose em mais de 5% ou sai da faixa selecionada. Ajuste a dose/concentração ou valide uma diluição com a farmácia; a cópia foi bloqueada.</div> : null}
+      {route === "IM" && !imPreparationValid ? <div className="danger-note">Selecione um volume de água destilada disponível para calcular o preparo IM.</div> : null}
       {route === "IM" && doseInRange && !imDoseAfterRoundingValid ? <div className="danger-note">Com uma casa decimal, o volume IM altera a dose em mais de 5% ou sai da faixa selecionada. Ajuste o preparo antes de copiar.</div> : null}
       {route === "IV" && Number.isFinite(exactAspiratedVolume) && exactAspiratedVolume < 0.05 ? <div className="danger-note">O volume a aspirar ficaria abaixo de 0,1 mL após arredondamento. A cópia foi bloqueada; valide outra concentração/diluição.</div> : null}
       {route === "IM" && Number.isFinite(exactImVolume) && exactImVolume < 0.05 ? <div className="danger-note">O volume IM ficaria abaixo de 0,1 mL após arredondamento. A cópia foi bloqueada.</div> : null}
