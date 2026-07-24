@@ -1,8 +1,22 @@
 # PED Calc
 
-Calculadora independente de apoio à terapia intensiva pediátrica. A aplicação reúne venóclise, infusões, scores, antimicrobianos hospitalares e domiciliares e correções hidroeletrolíticas.
+Calculadora independente de apoio à terapia intensiva pediátrica. A aplicação reúne venóclise, infusões, scores, percentis de pressão arterial, folha de parada pediátrica, antimicrobianos hospitalares e domiciliares e correções hidroeletrolíticas.
 
 > Ferramenta de apoio matemático. Não substitui prescrição, protocolo institucional, avaliação clínica, validação farmacêutica nem dupla checagem independente.
+
+
+## Impressão rápida
+
+O módulo de pressão arterial possui o botão **Imprimir percentis de pressão**, e a folha de parada possui o botão **Imprimir folha de parada**. Durante a impressão, menus, fundo e controles de ação são ocultados automaticamente, mantendo apenas o conteúdo clínico em formato A4 paisagem.
+
+
+## Módulo de PA pediátrica e parada
+
+- **Percentis de PA:** informe a idade em dias, meses ou anos para consultar PAS, PAD e PAM nos níveis P5, P10, P50, P90, P95 e P95 + 12 mmHg, além de FC e FR por faixa etária. Para 1–17 anos, P5 e P10 são exibidos como estimativas matemáticas; P50, P90, P95 e P95 + 12 mmHg seguem a tabela da SBP na coluna de estatura P50.
+- **Folha de parada:** utiliza o peso rápido do site para calcular volumes, energias de desfibrilação e itens da sequência rápida de intubação.
+- Para 1 a 17 anos, a interface usa tabelas separadas para masculino e feminino e a estatura de referência no percentil 50.
+- A adrenalina endotraqueal não foi automatizada porque a planilha original apresentava divergência entre a dose máxima escrita e a fórmula da célula.
+- As planilhas originais não foram incluídas no repositório porque continham campos com identificação de pacientes; somente as tabelas clínicas sem dados pessoais foram transcritas.
 
 ## Requisitos
 
@@ -98,3 +112,25 @@ Depois disso, cada `git push` para `main` executará testes, build e publicaçã
 - `scripts/`: build e validação.
 
 As referências clínicas oficiais aparecem dentro da própria interface. Antes de uso assistencial, valide apresentações, concentrações e fluxos com a CCIH, farmácia e protocolo vigente da instituição.
+
+
+## Atualização de navegação e pressão arterial
+
+- Atalhos superiores reorganizados por módulo: manutenção, distúrbios hidroeletrolíticos, infusões, antimicrobianos e pressões.
+- Atalho fixo no cabeçalho para a área de folha de parada e pressão arterial.
+- Percentis de PA de 1 a 17 anos com seleção masculina ou feminina e estatura de referência no P50.
+
+## Atualização de módulos — julho de 2026
+
+- Peso rápido inicial alterado para 10 kg.
+- Atalhos e seções padronizados em seis módulos: venóclise, distúrbios hidroeletrolíticos, medicamentos de infusão contínua, antimicrobianos, folha de parada + percentil de pressão e scores clínicos.
+- Contagem de antibióticos domiciliares vinculada dinamicamente às 14 opções cadastradas.
+
+
+## Atualização de percentis de pressão arterial
+
+- Para 1 a 17 anos, P50, P90, P95 e P95 + 12 mmHg usam as tabelas da Sociedade Brasileira de Pediatria, separadas por sexo e considerando a coluna de estatura P50.
+- P5 e P10 foram incluídos como estimativas matemáticas por simetria em torno do P50: P10 = 2 × P50 − P90 e P5 = 2 × P50 − P95.
+- A PAM voltou a ser exibida e é calculada pela fórmula (PAS + 2 × PAD) ÷ 3 em todos os níveis.
+- As faixas de frequência cardíaca e frequência respiratória voltaram à tela de PA.
+- O sistema identifica visualmente P5 e P10 como estimados para não confundi-los com valores publicados diretamente pela SBP.

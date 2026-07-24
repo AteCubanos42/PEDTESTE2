@@ -12,6 +12,8 @@ import { CamCalculator, PainScaleCalculator, PrismCalculator, ScoreCalculator } 
 import { AntimicrobialCalculator } from "./AntimicrobialTools";
 import { ELECTROLYTE_TOOLS, ElectrolyteCalculator, type ElectrolyteToolId } from "./ElectrolyteTools";
 import { OralAntibioticCalculator } from "./OralAntibioticTools";
+import { BloodPressureCalculator, CardiacArrestCalculator } from "./EmergencyTools";
+import type { BloodPressureSex } from "./blood-pressure-data";
 import { PrescriptionBlock } from "./PrescriptionBlock";
 import {
   ANTIMICROBIAL_GROUPS,
@@ -55,6 +57,8 @@ type ActiveTool =
   | { type: "electrolyte"; tool: ElectrolyteToolId }
   | { type: "antimicrobial"; antimicrobial: Antimicrobial }
   | { type: "oral-antibiotic"; antibiotic: OralAntibiotic }
+  | { type: "blood-pressure" }
+  | { type: "cardiac-arrest" }
   | null;
 
 const DRUGS: Drug[] = [
@@ -678,7 +682,8 @@ function DualDiureticCalculator({ initialWeight }: { initialWeight: string }) {
 
 export default function Home() {
   const [activeTool, setActiveTool] = useState<ActiveTool>(null);
-  const [weight, setWeight] = useState("12");
+  const [weight, setWeight] = useState("10");
+  const [bloodPressureSex, setBloodPressureSex] = useState<BloodPressureSex>("masculino");
   const [search, setSearch] = useState("");
   const [group, setGroup] = useState<DrugGroup | "Todos">("Todos");
   const [scoreGroup, setScoreGroup] = useState("Todos");
@@ -716,18 +721,26 @@ export default function Home() {
           <span className="brand-mark">P+</span>
           <span><strong>PED</strong><small>CALC</small></span>
         </a>
-        <nav aria-label="Navegação principal">
-          <a href="#venoclise">Venóclise</a>
+        <nav aria-label="Navegação dos módulos">
+          <a href="#venoclise">Venóclise + VIG</a>
           <a href="#eletrolitos">Distúrbios H-E</a>
-          <a href="#infusoes">Infusões</a>
-          <a href="#scores">Scores</a>
+          <a href="#infusoes">Medicamentos de infusão contínua</a>
           <a href="#antimicrobianos">Antimicrobianos</a>
+          <a className="nav-emergency" href="#emergencia">Folha de parada + PA</a>
+          <a href="#scores">Scores</a>
         </nav>
-        <label className="weight-control">
-          <span>Peso rápido</span>
-          <input aria-label="Peso rápido em quilogramas" inputMode="decimal" min="0" onChange={(e) => setWeight(e.target.value)} step="0.1" type="number" value={weight} />
-          <b>kg</b>
-        </label>
+        <div className="header-tools">
+          <a className="emergency-shortcut mobile-emergency-shortcut" href="#emergencia" aria-label="Ir para pressão arterial e folha de parada">
+            <span className="shortcut-full">Folha de parada + PA</span>
+            <span className="shortcut-short">PA + Parada</span>
+            <b>→</b>
+          </a>
+          <label className="weight-control">
+            <span>Peso rápido</span>
+            <input aria-label="Peso rápido em quilogramas" inputMode="decimal" min="0" onChange={(e) => setWeight(e.target.value)} step="0.1" type="number" value={weight} />
+            <b>kg</b>
+          </label>
+        </div>
       </header>
 
       <section className="hero" id="top">
@@ -746,11 +759,12 @@ export default function Home() {
             <span>PESO</span>
             <span className="console-weight-input"><input aria-label="Peso do caso atual em quilogramas" inputMode="decimal" min="0" onChange={(event) => setWeight(event.target.value)} step="0.1" type="number" value={weight} /><small>kg</small></span>
           </label>
-          <button onClick={() => setActiveTool({ type: "maintenance" })}><span>01</span><b>MANUTENÇÃO</b><em>{fmt(maintenanceDaily(number(weight)) / 24)} mL/h</em></button>
-          <a href="#eletrolitos"><span>02</span><b>DISTÚRBIOS H-E</b><em>8 ferramentas</em></a>
-          <button onClick={() => setActiveTool({ type: "gir" })}><span>03</span><b>VIG + ELETRÓLITOS</b><em>abrir cálculo</em></button>
-          <a href="#scores"><span>04</span><b>SCORES</b><em>17 ferramentas</em></a>
-          <a href="#antimicrobianos"><span>05</span><b>ANTIMICROBIANOS</b><em>{ANTIMICROBIALS.length} hospitalares + {ORAL_ANTIBIOTICS.length} VO</em></a>
+          <a href="#venoclise"><span>01</span><b>VENÓCLISE DE MANUTENÇÃO + VIG E ELETRÓLITOS</b><em>{fmt(maintenanceDaily(number(weight)) / 24)} mL/h pelo peso atual</em></a>
+          <a href="#eletrolitos"><span>02</span><b>DISTÚRBIOS HIDROELETROLÍTICOS</b><em>8 ferramentas de correção</em></a>
+          <a href="#infusoes"><span>03</span><b>MEDICAMENTOS DE INFUSÃO CONTÍNUA</b><em>{DRUGS.length + 2} opções e calculadoras</em></a>
+          <a href="#antimicrobianos"><span>04</span><b>ANTIMICROBIANOS</b><em>{ANTIMICROBIALS.length} hospitalares + {ORAL_ANTIBIOTICS.length} domiciliares</em></a>
+          <a href="#emergencia"><span>05</span><b>FOLHA DE PARADA + PERCENTIL DE PRESSÃO</b><em>percentis masculino e feminino + folha pelo peso</em></a>
+          <a href="#scores"><span>06</span><b>SCORES CLÍNICOS</b><em>instrumentos de avaliação pediátrica</em></a>
         </div>
       </section>
 
@@ -760,7 +774,7 @@ export default function Home() {
       </section>
 
       <section className="section" id="venoclise">
-        <div className="section-heading"><div><span className="eyebrow">MÓDULO 01</span><h2>Venóclise</h2></div><p>Do cálculo básico à composição com VIG e eletrólitos.</p></div>
+        <div className="section-heading"><div><span className="eyebrow">MÓDULO 01</span><h2>Venóclise de manutenção + VIG e eletrólitos</h2></div><p>Manutenção hídrica e composição personalizada reunidas no mesmo módulo.</p></div>
         <div className="feature-grid two-cards">
           <button className="feature-card maintenance" onClick={() => setActiveTool({ type: "maintenance" })}>
             <span className="card-index">01</span><div className="card-icon">H</div><div><h3>Manutenção hídrica</h3><p>Venóclise isotônica por Holliday–Segar, com quota de 1% a 100%.</p></div><b>ABRIR →</b>
@@ -784,7 +798,7 @@ export default function Home() {
       </section>
 
       <section className="section dark-section" id="infusoes">
-        <div className="section-heading inverse"><div><span className="eyebrow light">MÓDULO 03</span><h2>Infusões contínuas</h2></div><p>Calcule vazão ou reconstrua a dose a partir da bomba.</p></div>
+        <div className="section-heading inverse"><div><span className="eyebrow light">MÓDULO 03</span><h2>Medicamentos de Infusão Contínua</h2></div><p>Calcule vazão ou reconstrua a dose a partir da bomba.</p></div>
         <div className="toolbar">
           <div className="group-tabs" role="tablist" aria-label="Grupos de medicamentos">
             {(["Todos", "Analgossedação", "Vasoativas", "Outras drogas"] as const).map((item) => <button className={group === item ? "active" : ""} key={item} onClick={() => setGroup(item)}>{item}</button>)}
@@ -813,41 +827,9 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section scores-section" id="scores">
-        <div className="section-heading"><div><span className="eyebrow">MÓDULO 04</span><h2>Scores clínicos</h2></div><p>Instrumentos pontuados, interpretações e referências em uma única tela.</p></div>
-        <div className="score-toolbar">
-          <div className="score-tabs">
-            {["Todos", "Admissão na UTI", ...SCORE_CATEGORIES].map((category) => <button className={scoreGroup === category ? "active" : ""} key={category} onClick={() => setScoreGroup(category)}>{category}</button>)}
-          </div>
-          <span>{17} ferramentas</span>
-        </div>
-        <div className="score-grid">
-          {(scoreGroup === "Todos" || scoreGroup === "Admissão na UTI") ? (
-            <button className="score-card featured" onClick={() => setActiveTool({ type: "prism" })}>
-              <span className="score-card-index">01</span><i>P</i><div><small>Admissão na UTI</small><h3>PRISM IV oficial</h3><p>Probabilidade de mortalidade pelo modelo publicado.</p></div><b>→</b>
-            </button>
-          ) : null}
-          {SCORE_DEFINITIONS.filter((definition) => scoreGroup === "Todos" || definition.category === scoreGroup).map((definition, index) => (
-            <button className="score-card" key={definition.id} onClick={() => setActiveTool({ type: "score", definition })}>
-              <span className="score-card-index">{String(index + 2).padStart(2, "0")}</span><i>{definition.name.slice(0, 1)}</i><div><small>{definition.category}</small><h3>{definition.name}</h3><p>{definition.summary}</p></div><em>{definition.short}</em><b>→</b>
-            </button>
-          ))}
-          {(scoreGroup === "Todos" || scoreGroup === "Dor") ? (
-            <button className="score-card" onClick={() => setActiveTool({ type: "pain" })}>
-              <span className="score-card-index">16</span><i>D</i><div><small>Dor</small><h3>Escalas autorreferidas</h3><p>EN, EVA e pontuação das escalas de faces.</p></div><em>0–10</em><b>→</b>
-            </button>
-          ) : null}
-          {(scoreGroup === "Todos" || scoreGroup === "Delirium") ? (
-            <button className="score-card" onClick={() => setActiveTool({ type: "cam" })}>
-              <span className="score-card-index">17</span><i>C</i><div><small>Delirium</small><h3>pCAM / psCAM-ICU</h3><p>Fluxograma diagnóstico adaptado à idade.</p></div><em>fluxo</em><b>→</b>
-            </button>
-          ) : null}
-        </div>
-      </section>
-
       <section className="section antimicrobial-section" id="antimicrobianos">
         <div className="section-heading">
-          <div><span className="eyebrow">MÓDULO 05 · ATB</span><h2>Antimicrobianos</h2></div>
+          <div><span className="eyebrow">MÓDULO 04 · ANTIMICROBIANOS</span><h2>Antimicrobianos</h2></div>
           <p>ATB hospitalares com IV–AVP, IV–AVC e IM quando descritos; ATB domiciliares por via oral em uma área separada.</p>
         </div>
         <div className="antimicrobial-warning">
@@ -856,7 +838,7 @@ export default function Home() {
         </div>
         <div className="antibiotic-setting-tabs" role="tablist" aria-label="Local de uso dos antibióticos">
           <button aria-selected={antibioticSetting === "hospital"} className={antibioticSetting === "hospital" ? "active" : ""} onClick={() => setAntibioticSetting("hospital")} role="tab"><strong>ATB hospitalares</strong><span>21 preparações</span></button>
-          <button aria-selected={antibioticSetting === "home"} className={antibioticSetting === "home" ? "active" : ""} onClick={() => setAntibioticSetting("home")} role="tab"><strong>ATB domiciliares</strong><span>Via oral · 9 opções</span></button>
+          <button aria-selected={antibioticSetting === "home"} className={antibioticSetting === "home" ? "active" : ""} onClick={() => setAntibioticSetting("home")} role="tab"><strong>ATB domiciliares</strong><span>Via oral · {ORAL_ANTIBIOTICS.length} opções</span></button>
         </div>
 
         {antibioticSetting === "hospital" ? (
@@ -906,6 +888,65 @@ export default function Home() {
         )}
       </section>
 
+      <section className="section emergency-section" id="emergencia">
+        <div className="section-heading">
+          <div><span className="eyebrow">MÓDULO 05 · EMERGÊNCIA</span><h2>Folha de Parada + Percentil de Pressão</h2></div>
+          <p>Percentis por idade e sexo, usando estatura no P50, com PAS, PAD, PAM, FC, FR e folha de emergência calculada pelo peso da criança.</p>
+        </div>
+        <div className="emergency-warning"><strong>Uso profissional e conferido</strong><span>Para 1 a 17 anos, P50, P90, P95 e P95 + 12 mmHg seguem a referência da Sociedade Brasileira de Pediatria na coluna de estatura P50. P5 e P10 são exibidos como estimativas matemáticas, e a PAM é calculada a partir de PAS e PAD. A folha de parada mantém os alertas e conferências já existentes.</span></div>
+        <div className="bp-sex-home" aria-label="Escolha do sexo para a tabela de pressão arterial">
+          <div>
+            <span className="eyebrow">TABELA DE PA · 1 A 17 ANOS</span>
+            <h3>Selecione o sexo antes de abrir os percentis</h3>
+            <p>Para 1 a 17 anos, a seleção masculino/feminino aplica os valores correspondentes à estatura P50 e mantém os dados de FC e FR por faixa etária.</p>
+          </div>
+          <div className="bp-sex-buttons" role="group" aria-label="Sexo da tabela de pressão arterial">
+            <button aria-pressed={bloodPressureSex === "masculino"} className={bloodPressureSex === "masculino" ? "active" : ""} onClick={() => setBloodPressureSex("masculino")} type="button">Masculino</button>
+            <button aria-pressed={bloodPressureSex === "feminino"} className={bloodPressureSex === "feminino" ? "active" : ""} onClick={() => setBloodPressureSex("feminino")} type="button">Feminino</button>
+          </div>
+        </div>
+        <div className="feature-grid two-cards emergency-tool-grid">
+          <button className="feature-card pressure-card" id="pressao" onClick={() => setActiveTool({ type: "blood-pressure" })}>
+            <span className="card-index">01</span><div className="card-icon">PA</div><div><h3>Percentis de pressão · {bloodPressureSex === "feminino" ? "Feminino" : "Masculino"}</h3><p>Sexo selecionado acima. Consulte PAS, PAD e PAM nos níveis P5, P10, P50, P90, P95 e P95 + 12 mmHg, além de FC e FR.</p></div><b>ABRIR →</b>
+          </button>
+          <button className="feature-card arrest-card" id="folha-parada" onClick={() => setActiveTool({ type: "cardiac-arrest" })}>
+            <span className="card-index">02</span><div className="card-icon">PCR</div><div><h3>Folha de parada</h3><p>Medicações, desfibrilação e sequência rápida de intubação calculadas pelo peso rápido.</p></div><b>ABRIR →</b>
+          </button>
+        </div>
+      </section>
+
+      <section className="section scores-section" id="scores">
+        <div className="section-heading"><div><span className="eyebrow">MÓDULO 06 · FINAL</span><h2>Scores clínicos</h2></div><p>Instrumentos pontuados, interpretações e referências em uma única tela.</p></div>
+        <div className="score-toolbar">
+          <div className="score-tabs">
+            {["Todos", "Admissão na UTI", ...SCORE_CATEGORIES].map((category) => <button className={scoreGroup === category ? "active" : ""} key={category} onClick={() => setScoreGroup(category)}>{category}</button>)}
+          </div>
+          <span>{17} ferramentas</span>
+        </div>
+        <div className="score-grid">
+          {(scoreGroup === "Todos" || scoreGroup === "Admissão na UTI") ? (
+            <button className="score-card featured" onClick={() => setActiveTool({ type: "prism" })}>
+              <span className="score-card-index">01</span><i>P</i><div><small>Admissão na UTI</small><h3>PRISM IV oficial</h3><p>Probabilidade de mortalidade pelo modelo publicado.</p></div><b>→</b>
+            </button>
+          ) : null}
+          {SCORE_DEFINITIONS.filter((definition) => scoreGroup === "Todos" || definition.category === scoreGroup).map((definition, index) => (
+            <button className="score-card" key={definition.id} onClick={() => setActiveTool({ type: "score", definition })}>
+              <span className="score-card-index">{String(index + 2).padStart(2, "0")}</span><i>{definition.name.slice(0, 1)}</i><div><small>{definition.category}</small><h3>{definition.name}</h3><p>{definition.summary}</p></div><em>{definition.short}</em><b>→</b>
+            </button>
+          ))}
+          {(scoreGroup === "Todos" || scoreGroup === "Dor") ? (
+            <button className="score-card" onClick={() => setActiveTool({ type: "pain" })}>
+              <span className="score-card-index">16</span><i>D</i><div><small>Dor</small><h3>Escalas autorreferidas</h3><p>EN, EVA e pontuação das escalas de faces.</p></div><em>0–10</em><b>→</b>
+            </button>
+          ) : null}
+          {(scoreGroup === "Todos" || scoreGroup === "Delirium") ? (
+            <button className="score-card" onClick={() => setActiveTool({ type: "cam" })}>
+              <span className="score-card-index">17</span><i>C</i><div><small>Delirium</small><h3>pCAM / psCAM-ICU</h3><p>Fluxograma diagnóstico adaptado à idade.</p></div><em>fluxo</em><b>→</b>
+            </button>
+          ) : null}
+        </div>
+      </section>
+
       <footer>
         <div className="brand footer-brand"><span className="brand-mark">P+</span><span><strong>PED</strong><small>CALC</small></span></div>
         <p>Ferramenta independente de apoio matemático para profissionais habilitados.</p>
@@ -928,6 +969,8 @@ export default function Home() {
           {activeTool.type === "electrolyte" ? <ElectrolyteCalculator initialWeight={weight} tool={activeTool.tool} /> : null}
           {activeTool.type === "antimicrobial" ? <AntimicrobialCalculator antimicrobial={activeTool.antimicrobial} initialWeight={weight} /> : null}
           {activeTool.type === "oral-antibiotic" ? <OralAntibioticCalculator antibiotic={activeTool.antibiotic} initialWeight={weight} /> : null}
+          {activeTool.type === "blood-pressure" ? <BloodPressureCalculator initialSex={bloodPressureSex} onSexChange={setBloodPressureSex} /> : null}
+          {activeTool.type === "cardiac-arrest" ? <CardiacArrestCalculator initialWeight={weight} /> : null}
         </ToolModal>
       ) : null}
     </main>
