@@ -20,6 +20,7 @@ test("module shortcuts and page sections follow the approved order", async () =>
     'href="#scores"',
     'href="#npt"',
     'href="#medicacoes-gerais"',
+    'href="#sedacao-delirium"',
   ];
   const shortcutIndexes = shortcutOrder.map((token) => page.indexOf(token));
   assert.ok(shortcutIndexes.every((index) => index >= 0));
@@ -34,6 +35,7 @@ test("module shortcuts and page sections follow the approved order", async () =>
     'id="scores"',
     'id="npt"',
     'id="medicacoes-gerais"',
+    'id="sedacao-delirium"',
   ];
   const sectionIndexes = sectionOrder.map((token) => page.indexOf(token));
   assert.ok(sectionIndexes.every((index) => index >= 0));
@@ -50,6 +52,8 @@ test("module shortcuts and page sections follow the approved order", async () =>
   assert.match(page, /MÓDULO 07 · NUTRIÇÃO/);
   assert.match(page, /<span>08<\/span><b>MEDICAÇÕES PEDIÁTRICAS<\/b>/);
   assert.match(page, /MÓDULO 08 · MEDICAÇÕES/);
+  assert.match(page, /<span>09<\/span><b>SEDAÇÃO ENTERAL \+ DELIRIUM<\/b>/);
+  assert.match(page, /MÓDULO 09 · SEDAÇÃO/);
 });
 
 function parseExportedArray(sourceText, exportName) {

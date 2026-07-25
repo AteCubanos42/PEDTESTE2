@@ -158,3 +158,12 @@ A versão inclui uma calculadora de NPT pediátrica baseada na planilha fornecid
 - Bloqueio de cópia quando idade, peso, apresentação obrigatória ou fracionamento não são compatíveis.
 - Orientações tópicas e esquemas com unidade ambígua permanecem em modo informativo, sem criar cálculo não sustentado.
 - Adrenalina para anafilaxia com cálculo IM por peso, teto máximo e alternativas fixas por idade.
+
+## Módulo 09 - Sedação enteral e delirium
+
+- Calculadoras de sedação enteral para metadona, diazepam, lorazepam, clonidina, morfina, hidrato de cloral e cetamina VO.
+- Seleção de dose dentro da faixa por peso, intervalo, via oral/SNG/SNE e apresentação disponível.
+- Preparos padronizados para metadona, diazepam, lorazepam e clonidina, incluindo cálculo da concentração e do volume por dose.
+- Concentração manual para apresentações de morfina, hidrato de cloral e cetamina quando a unidade não dispõe de uma formulação fixa cadastrada.
+- Tratamento do delirium organizado em haloperidol, risperidona, olanzapina, clonidina e melatonina.
+- Rascunhos de prescrição bloqueados até confirmação clínica e revisão da apresentação, monitorização e protocolo institucional.

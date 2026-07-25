@@ -15,6 +15,7 @@ import { OralAntibioticCalculator } from "./OralAntibioticTools";
 import { BloodPressureCalculator, CardiacArrestCalculator } from "./EmergencyTools";
 import { NptCalculator } from "./NptTools";
 import { GeneralMedicationCalculator } from "./GeneralMedicationTools";
+import { SedationDeliriumCalculator, type SedationDeliriumTab } from "./SedationDeliriumTools";
 import type { BloodPressureSex } from "./blood-pressure-data";
 import { PrescriptionBlock } from "./PrescriptionBlock";
 import {
@@ -74,6 +75,7 @@ type ActiveTool =
   | { type: "cardiac-arrest" }
   | { type: "npt" }
   | { type: "general-medication"; medication: GeneralMedication }
+  | { type: "sedation-delirium"; initialTab: SedationDeliriumTab }
   | null;
 
 const DRUGS: Drug[] = [
@@ -756,6 +758,7 @@ export default function Home() {
           <a href="#scores">Scores</a>
           <a href="#npt">NPT</a>
           <a href="#medicacoes-gerais">Medicações gerais</a>
+          <a href="#sedacao-delirium">Sedação enteral + delirium</a>
         </nav>
         <div className="header-tools">
           <a className="emergency-shortcut mobile-emergency-shortcut" href="#emergencia" aria-label="Ir para pressão arterial e folha de parada">
@@ -775,7 +778,7 @@ export default function Home() {
         <div className="hero-copy">
           <span className="eyebrow light">INTENSIVA PEDIÁTRICA · CÁLCULO À BEIRA-LEITO</span>
           <h1>PED <em>Calc.</em></h1>
-          <p>Vazões, diluições, correções hidroeletrolíticas, venóclise, scores, antimicrobianos, nutrição parenteral e medicações pediátricas por categoria.</p>
+          <p>Vazões, diluições, correções hidroeletrolíticas, venóclise, scores, antimicrobianos, nutrição parenteral, medicações pediátricas e sedação enteral.</p>
           <div className="hero-actions">
             <button className="primary-action" onClick={() => setActiveTool({ type: "maintenance" })}>Calcular venóclise <span>→</span></button>
             <a href="#antimicrobianos">Abrir antimicrobianos</a>
@@ -795,6 +798,7 @@ export default function Home() {
           <a href="#scores"><span>06</span><b>SCORES CLÍNICOS</b><em>instrumentos de avaliação pediátrica</em></a>
           <a href="#npt"><span>07</span><b>NUTRIÇÃO PARENTERAL TOTAL</b><em>planilha de composição + guia de uso</em></a>
           <a href="#medicacoes-gerais"><span>08</span><b>MEDICAÇÕES PEDIÁTRICAS</b><em>{GENERAL_MEDICATIONS.length} opções organizadas por categoria</em></a>
+          <a href="#sedacao-delirium"><span>09</span><b>SEDAÇÃO ENTERAL + DELIRIUM</b><em>7 opções enterais + 5 esquemas para delirium</em></a>
         </div>
       </section>
 
@@ -1023,6 +1027,21 @@ export default function Home() {
         {filteredGeneralMedications.length === 0 ? <p className="antimicrobial-empty">Nenhuma medicação corresponde aos filtros.</p> : null}
       </section>
 
+      <section className="section sedation-delirium-section" id="sedacao-delirium">
+        <div className="section-heading">
+          <div><span className="eyebrow">MÓDULO 09 · SEDAÇÃO</span><h2>Sedação enteral e tratamento do delirium</h2></div>
+          <p>Doses por peso, preparos enterais padronizados e rascunhos de prescrição para sedoanalgesia e delirium.</p>
+        </div>
+        <div className="feature-grid two-cards sedation-module-grid">
+          <button className="feature-card sedation-enteral-card" onClick={() => setActiveTool({ type: "sedation-delirium", initialTab: "enteral" })}>
+            <span className="card-index">01</span><div className="card-icon">SE</div><div><h3>Sedação enteral</h3><p>Metadona, diazepam, lorazepam, clonidina, morfina, hidrato de cloral e cetamina VO.</p></div><b>ABRIR →</b>
+          </button>
+          <button className="feature-card delirium-treatment-card" onClick={() => setActiveTool({ type: "sedation-delirium", initialTab: "delirium" })}>
+            <span className="card-index">02</span><div className="card-icon">D</div><div><h3>Tratamento do delirium</h3><p>Haloperidol, risperidona, olanzapina, clonidina e melatonina organizados por esquema.</p></div><b>ABRIR →</b>
+          </button>
+        </div>
+      </section>
+
       <footer>
         <div className="brand footer-brand"><span className="brand-mark">P+</span><span><strong>PED</strong><small>CALC</small></span></div>
         <p>Ferramenta independente de apoio matemático para profissionais habilitados.</p>
@@ -1049,6 +1068,7 @@ export default function Home() {
           {activeTool.type === "cardiac-arrest" ? <CardiacArrestCalculator initialWeight={weight} /> : null}
           {activeTool.type === "npt" ? <NptCalculator initialWeight={weight} /> : null}
           {activeTool.type === "general-medication" ? <GeneralMedicationCalculator key={activeTool.medication.id} medication={activeTool.medication} initialWeight={weight} /> : null}
+          {activeTool.type === "sedation-delirium" ? <SedationDeliriumCalculator initialTab={activeTool.initialTab} initialWeight={weight} /> : null}
         </ToolModal>
       ) : null}
     </main>

@@ -1126,3 +1126,43 @@ footer > div:last-child a, footer > div:last-child span { color: var(--teal); fo
   .general-medication-card { min-height: 104px; }
   .general-regimen-summary, .general-dose-result { grid-template-columns: 1fr; }
 }
+
+/* Módulo 09 · sedação enteral e delirium */
+.sedation-delirium-section { background: #eef4f1; border-top: 1px solid #cedbd5; }
+.sedation-module-grid .feature-card { min-height: 174px; }
+.sedation-enteral-card .card-icon { background: #d8eee8; }
+.delirium-treatment-card .card-icon { background: #efe7ff; }
+.tool-modal:has(.sedation-heading) { max-width: 1120px; }
+.sedation-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 18px; }
+.sedation-tabs button { background: transparent; border: 1px solid #b7c9c3; border-radius: 999px; color: var(--ink); cursor: pointer; font-size: 10px; font-weight: 900; letter-spacing: .07em; min-height: 38px; padding: 0 16px; text-transform: uppercase; }
+.sedation-tabs button.active { background: var(--ink); border-color: var(--ink); color: white; }
+.sedation-medication-picker { display: grid; gap: 8px; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 18px 0; }
+.sedation-medication-picker button { background: #f7f4ed; border: 1px solid #d7d5ce; border-radius: 10px; cursor: pointer; min-height: 92px; padding: 12px; text-align: left; }
+.sedation-medication-picker button.active { background: var(--navy); border-color: var(--navy); color: white; }
+.sedation-medication-picker strong { display: block; font-size: 12px; margin-bottom: 5px; }
+.sedation-medication-picker span { color: var(--muted); display: block; font-size: 9px; line-height: 1.4; }
+.sedation-medication-picker button.active span { color: #bed0ce; }
+.delirium-picker { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.sedation-controls { background: #f7f3ea; border: 1px solid #ddd7ca; border-radius: 12px; padding: 18px; }
+.sedation-controls .form-grid + .form-grid { margin-top: 12px; }
+.sedation-controls .select-field { margin-top: 0; }
+.sedation-manual-concentration, .sedation-single-control { margin-top: 12px; max-width: 420px; }
+.sedation-static-field { background: white; border: 1px solid #d5ddd8; border-radius: 8px; display: flex; flex-direction: column; gap: 7px; justify-content: center; min-height: 72px; padding: 12px; }
+.sedation-static-field span { color: var(--muted); font-size: 8px; font-weight: 900; letter-spacing: .07em; text-transform: uppercase; }
+.sedation-static-field strong { font-size: 12px; }
+.sedation-result-grid { background: var(--navy); border-radius: 12px; color: white; display: grid; gap: 1px; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 18px 0; overflow: hidden; }
+.sedation-result-grid > div { background: rgba(255,255,255,.055); min-height: 88px; padding: 15px; }
+.sedation-result-grid > div.primary { background: var(--teal-dark); }
+.sedation-result-grid span { color: #9dc5bf; display: block; font-size: 8px; font-weight: 900; letter-spacing: .07em; margin-bottom: 8px; text-transform: uppercase; }
+.sedation-result-grid strong { font-family: Georgia, serif; font-size: 18px; line-height: 1.15; }
+
+@media (max-width: 980px) {
+  .sedation-medication-picker, .delirium-picker { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sedation-result-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 620px) {
+  .sedation-medication-picker, .delirium-picker, .sedation-result-grid { grid-template-columns: 1fr; }
+  .sedation-tabs { display: grid; }
+  .sedation-tabs button { width: 100%; }
+}
