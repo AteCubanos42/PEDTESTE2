@@ -1072,3 +1072,57 @@ footer > div:last-child a, footer > div:last-child span { color: var(--teal); fo
 .npt-guide-links { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
 .npt-guide-links a:last-child { background: var(--teal-dark); }
 @media (max-width: 620px) { .npt-guide-links { display: grid; justify-content: stretch; } }
+
+/* Módulo 08 · medicações pediátricas */
+.general-medications-section { background: #f5f1e8; }
+.general-medication-intro { align-items: center; background: var(--navy); border-radius: 12px; color: white; display: grid; gap: 6px; grid-template-columns: minmax(210px, .7fr) 1.3fr; margin-bottom: 18px; padding: 18px 20px; }
+.general-medication-intro strong { color: var(--yellow); font-family: Georgia, serif; font-size: 19px; }
+.general-medication-intro span { color: #c8d8d7; font-size: 12px; line-height: 1.55; }
+.general-medication-toolbar { margin-bottom: 16px; }
+.general-medication-count { align-items: baseline; display: flex; gap: 8px; margin: 0 0 14px; }
+.general-medication-count strong { color: var(--coral); font-family: Georgia, serif; font-size: 30px; }
+.general-medication-count span { color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+.general-medication-grid { display: grid; gap: 10px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.general-medication-card { align-items: center; background: white; border: 1px solid #d6d4cc; border-radius: 10px; cursor: pointer; display: grid; gap: 11px; grid-template-columns: auto auto 1fr auto; min-height: 116px; padding: 14px; text-align: left; transition: border-color .15s ease, transform .15s ease; }
+.general-medication-card:hover, .general-medication-card:focus-visible { border-color: var(--teal); outline: none; transform: translateY(-2px); }
+.general-medication-card .general-medication-index { align-self: start; color: var(--coral); font-size: 9px; font-weight: 900; }
+.general-medication-card i { align-items: center; background: var(--yellow); border: 1px solid var(--ink); border-radius: 50%; display: flex; font-family: Georgia, serif; font-size: 18px; font-style: normal; font-weight: 900; height: 42px; justify-content: center; width: 42px; }
+.general-medication-card div { min-width: 0; }
+.general-medication-card small { color: var(--teal-dark); display: block; font-size: 8px; font-weight: 900; letter-spacing: .07em; margin-bottom: 5px; text-transform: uppercase; }
+.general-medication-card h3 { font-size: 15px; margin: 0 0 5px; }
+.general-medication-card p { color: var(--muted); font-size: 10px; line-height: 1.45; margin: 0; }
+.general-medication-card b { color: var(--coral); font-size: 18px; }
+.general-medication-card[data-category="Anafilaxia"] { background: #fff0ec; border-color: #e7a99f; }
+.general-medication-card[data-category="Corticoides"] i { background: #d9ece9; }
+.general-medication-card[data-category="Anti-histamínicos"] i { background: #efe7ff; }
+.general-medication-card[data-category="Trato gastrointestinal"] i { background: #e6f2d8; }
+.general-medication-card[data-category="Analgésicos e antitérmicos"] i { background: #ffe1d8; }
+
+.general-medication-heading .general-medication-badges { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+.general-medication-badges span { background: var(--yellow); border: 1px solid var(--ink); border-radius: 999px; color: var(--ink); font-size: 9px; font-weight: 900; letter-spacing: .06em; padding: 6px 9px; text-transform: uppercase; }
+.general-medication-controls { background: #f7f3ea; border: 1px solid #ded9cd; border-radius: 12px; margin-top: 20px; padding: 18px; }
+.general-medication-controls .select-field { margin-top: 12px; }
+.general-regimen-summary { display: grid; gap: 1px; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 15px; overflow: hidden; border-radius: 9px; background: var(--navy); }
+.general-regimen-summary div { background: rgba(255,255,255,.06); min-height: 76px; padding: 13px; }
+.general-regimen-summary span { color: #8fb8b1; display: block; font-size: 8px; font-weight: 900; letter-spacing: .07em; margin-bottom: 7px; }
+.general-regimen-summary strong { color: white; font-size: 11px; line-height: 1.35; }
+.general-dose-result { background: var(--navy); border-radius: 12px; color: white; display: grid; gap: 1px; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 18px; overflow: hidden; }
+.general-dose-result > div { background: rgba(255,255,255,.055); min-height: 90px; padding: 16px; }
+.general-dose-result span { color: #9dc5bf; display: block; font-size: 9px; font-weight: 900; letter-spacing: .07em; margin-bottom: 8px; text-transform: uppercase; }
+.general-dose-result strong { font-family: Georgia, serif; font-size: 22px; line-height: 1.15; }
+.general-dose-result .general-dose-primary { background: var(--teal-dark); }
+.general-instruction-result { background: var(--navy); border-left: 5px solid var(--yellow); border-radius: 10px; color: white; margin-top: 18px; padding: 18px; }
+.general-instruction-result span { color: var(--yellow); display: block; font-size: 9px; font-weight: 900; letter-spacing: .08em; margin-bottom: 8px; }
+.general-instruction-result strong { font-size: 13px; line-height: 1.55; }
+
+@media (max-width: 1050px) {
+  .general-medication-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .general-regimen-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 680px) {
+  .general-medication-intro { grid-template-columns: 1fr; }
+  .general-medication-grid { grid-template-columns: 1fr; }
+  .general-medication-card { min-height: 104px; }
+  .general-regimen-summary, .general-dose-result { grid-template-columns: 1fr; }
+}

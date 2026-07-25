@@ -19,6 +19,7 @@ test("module shortcuts and page sections follow the approved order", async () =>
     'href="#emergencia"',
     'href="#scores"',
     'href="#npt"',
+    'href="#medicacoes-gerais"',
   ];
   const shortcutIndexes = shortcutOrder.map((token) => page.indexOf(token));
   assert.ok(shortcutIndexes.every((index) => index >= 0));
@@ -32,6 +33,7 @@ test("module shortcuts and page sections follow the approved order", async () =>
     'id="emergencia"',
     'id="scores"',
     'id="npt"',
+    'id="medicacoes-gerais"',
   ];
   const sectionIndexes = sectionOrder.map((token) => page.indexOf(token));
   assert.ok(sectionIndexes.every((index) => index >= 0));
@@ -46,6 +48,8 @@ test("module shortcuts and page sections follow the approved order", async () =>
   assert.match(page, /<span>06<\/span><b>SCORES CLÍNICOS<\/b>/);
   assert.match(page, /<span>07<\/span><b>NUTRIÇÃO PARENTERAL TOTAL<\/b>/);
   assert.match(page, /MÓDULO 07 · NUTRIÇÃO/);
+  assert.match(page, /<span>08<\/span><b>MEDICAÇÕES PEDIÁTRICAS<\/b>/);
+  assert.match(page, /MÓDULO 08 · MEDICAÇÕES/);
 });
 
 function parseExportedArray(sourceText, exportName) {

@@ -14,6 +14,7 @@ import { ELECTROLYTE_TOOLS, ElectrolyteCalculator, type ElectrolyteToolId } from
 import { OralAntibioticCalculator } from "./OralAntibioticTools";
 import { BloodPressureCalculator, CardiacArrestCalculator } from "./EmergencyTools";
 import { NptCalculator } from "./NptTools";
+import { GeneralMedicationCalculator } from "./GeneralMedicationTools";
 import type { BloodPressureSex } from "./blood-pressure-data";
 import { PrescriptionBlock } from "./PrescriptionBlock";
 import {
@@ -29,6 +30,12 @@ import {
   type OralAntibioticGroup,
 } from "./oral-antibiotics-data";
 import { SCORE_CATEGORIES, SCORE_DEFINITIONS, type ScoreDefinition } from "./scores-data";
+import {
+  GENERAL_MEDICATION_CATEGORIES,
+  GENERAL_MEDICATIONS,
+  type GeneralMedication,
+  type GeneralMedicationCategory,
+} from "./general-medications-data";
 
 type DrugGroup =
   | "Analgossedação"
@@ -66,6 +73,7 @@ type ActiveTool =
   | { type: "blood-pressure" }
   | { type: "cardiac-arrest" }
   | { type: "npt" }
+  | { type: "general-medication"; medication: GeneralMedication }
   | null;
 
 const DRUGS: Drug[] = [
@@ -701,6 +709,8 @@ export default function Home() {
   const [antimicrobialGroup, setAntimicrobialGroup] = useState<AntimicrobialGroup | "Todos">("Todos");
   const [oralSearch, setOralSearch] = useState("");
   const [oralGroup, setOralGroup] = useState<OralAntibioticGroup | "Todos">("Todos");
+  const [generalMedicationSearch, setGeneralMedicationSearch] = useState("");
+  const [generalMedicationCategory, setGeneralMedicationCategory] = useState<GeneralMedicationCategory | "Todos">("Todos");
   const filteredDrugs = useMemo(() => {
     const query = search.trim().toLocaleLowerCase("pt-BR");
     return DRUGS.filter((drug) => (group === "Todos" || drug.group === group) && (!query || drug.name.toLocaleLowerCase("pt-BR").includes(query)));
@@ -723,6 +733,13 @@ export default function Home() {
       return (oralGroup === "Todos" || item.group === oralGroup) && (!query || haystack.includes(query));
     });
   }, [oralGroup, oralSearch]);
+  const filteredGeneralMedications = useMemo(() => {
+    const query = generalMedicationSearch.trim().toLocaleLowerCase("pt-BR").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    return GENERAL_MEDICATIONS.filter((item) => {
+      const haystack = `${item.name} ${item.summary} ${item.category}`.toLocaleLowerCase("pt-BR").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      return (generalMedicationCategory === "Todos" || item.category === generalMedicationCategory) && (!query || haystack.includes(query));
+    });
+  }, [generalMedicationCategory, generalMedicationSearch]);
   return (
     <main>
       <header className="site-header">
@@ -738,6 +755,7 @@ export default function Home() {
           <a className="nav-emergency" href="#emergencia">Folha de parada + PA</a>
           <a href="#scores">Scores</a>
           <a href="#npt">NPT</a>
+          <a href="#medicacoes-gerais">Medicações gerais</a>
         </nav>
         <div className="header-tools">
           <a className="emergency-shortcut mobile-emergency-shortcut" href="#emergencia" aria-label="Ir para pressão arterial e folha de parada">
@@ -757,7 +775,7 @@ export default function Home() {
         <div className="hero-copy">
           <span className="eyebrow light">INTENSIVA PEDIÁTRICA · CÁLCULO À BEIRA-LEITO</span>
           <h1>PED <em>Calc.</em></h1>
-          <p>Vazões, diluições, correções hidroeletrolíticas, venóclise, scores, antimicrobianos e nutrição parenteral pediátrica.</p>
+          <p>Vazões, diluições, correções hidroeletrolíticas, venóclise, scores, antimicrobianos, nutrição parenteral e medicações pediátricas por categoria.</p>
           <div className="hero-actions">
             <button className="primary-action" onClick={() => setActiveTool({ type: "maintenance" })}>Calcular venóclise <span>→</span></button>
             <a href="#antimicrobianos">Abrir antimicrobianos</a>
@@ -776,6 +794,7 @@ export default function Home() {
           <a href="#emergencia"><span>05</span><b>FOLHA DE PARADA + PERCENTIL DE PRESSÃO</b><em>percentis masculino e feminino + folha pelo peso</em></a>
           <a href="#scores"><span>06</span><b>SCORES CLÍNICOS</b><em>instrumentos de avaliação pediátrica</em></a>
           <a href="#npt"><span>07</span><b>NUTRIÇÃO PARENTERAL TOTAL</b><em>planilha de composição + guia de uso</em></a>
+          <a href="#medicacoes-gerais"><span>08</span><b>MEDICAÇÕES PEDIÁTRICAS</b><em>{GENERAL_MEDICATIONS.length} opções organizadas por categoria</em></a>
         </div>
       </section>
 
@@ -975,6 +994,35 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="section general-medications-section" id="medicacoes-gerais">
+        <div className="section-heading">
+          <div><span className="eyebrow">MÓDULO 08 · MEDICAÇÕES</span><h2>Medicações pediátricas por categoria</h2></div>
+          <p>Antiparasitários, analgésicos e antitérmicos, trato gastrointestinal, anti-histamínicos, corticoides e anafilaxia.</p>
+        </div>
+        <div className="general-medication-intro">
+          <strong>Cálculo assistido por peso, idade e apresentação</strong>
+          <span>Selecione o medicamento e o esquema. O módulo calcula dose e quantidade quando o material fornece uma regra inequívoca; orientações tópicas ou ambíguas permanecem como texto para conferência.</span>
+        </div>
+        <div className="toolbar general-medication-toolbar">
+          <div className="group-tabs" role="tablist" aria-label="Categorias das medicações gerais">
+            {(["Todos", ...GENERAL_MEDICATION_CATEGORIES] as const).map((item) => <button className={generalMedicationCategory === item ? "active" : ""} key={item} onClick={() => setGeneralMedicationCategory(item)}>{item}</button>)}
+          </div>
+          <label className="search-box"><span>⌕</span><input aria-label="Buscar medicação geral" onChange={(event) => setGeneralMedicationSearch(event.target.value)} placeholder="Buscar medicamento" value={generalMedicationSearch} /></label>
+        </div>
+        <div className="general-medication-count"><strong>{filteredGeneralMedications.length}</strong><span>medicamentos e preparações</span></div>
+        <div className="general-medication-grid">
+          {filteredGeneralMedications.map((medication, index) => (
+            <button className="general-medication-card" data-category={medication.category} key={medication.id} onClick={() => setActiveTool({ type: "general-medication", medication })}>
+              <span className="general-medication-index">{String(index + 1).padStart(2, "0")}</span>
+              <i>{medication.name.slice(0, 1)}</i>
+              <div><small>{medication.category}</small><h3>{medication.name}</h3><p>{medication.summary}</p></div>
+              <b>→</b>
+            </button>
+          ))}
+        </div>
+        {filteredGeneralMedications.length === 0 ? <p className="antimicrobial-empty">Nenhuma medicação corresponde aos filtros.</p> : null}
+      </section>
+
       <footer>
         <div className="brand footer-brand"><span className="brand-mark">P+</span><span><strong>PED</strong><small>CALC</small></span></div>
         <p>Ferramenta independente de apoio matemático para profissionais habilitados.</p>
@@ -1000,6 +1048,7 @@ export default function Home() {
           {activeTool.type === "blood-pressure" ? <BloodPressureCalculator initialSex={bloodPressureSex} onSexChange={setBloodPressureSex} /> : null}
           {activeTool.type === "cardiac-arrest" ? <CardiacArrestCalculator initialWeight={weight} /> : null}
           {activeTool.type === "npt" ? <NptCalculator initialWeight={weight} /> : null}
+          {activeTool.type === "general-medication" ? <GeneralMedicationCalculator key={activeTool.medication.id} medication={activeTool.medication} initialWeight={weight} /> : null}
         </ToolModal>
       ) : null}
     </main>

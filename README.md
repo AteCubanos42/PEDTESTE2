@@ -7,7 +7,7 @@ Calculadora independente de apoio à terapia intensiva pediátrica. A aplicaçã
 
 ## Impressão rápida
 
-O módulo de pressão arterial possui o botão **Imprimir percentis de pressão**, e a folha de parada possui o botão **Imprimir folha de parada**. Durante a impressão, menus, fundo e controles de ação são ocultados automaticamente, mantendo apenas o conteúdo clínico em formato A4 paisagem.
+O módulo de pressão arterial possui o botão **Imprimir percentis de pressão**, e a folha de parada possui o botão **Imprimir folha de parada**. Durante a impressão, menus, fundo e controles de ação são ocultados automaticamente, mantendo apenas o conteúdo clínico em formato A4 retrato.
 
 
 ## Módulo de PA pediátrica e parada
@@ -147,3 +147,14 @@ As referências clínicas oficiais aparecem dentro da própria interface. Antes 
 ## Módulo 07 - Nutrição parenteral total
 
 A versão inclui uma calculadora de NPT pediátrica baseada na planilha fornecida, com quota hídrica disponível, VIG, aminoácidos, lipídios, eletrólitos, oligoelementos, vitaminas, relação Ca:P, calorias, osmolaridade e composição copiável. O módulo também contém um guia resumido e disponibiliza o fluxograma em PDF e a planilha original na pasta `public`.
+
+
+## Módulo 08 - Medicações pediátricas
+
+- 52 medicamentos e preparações organizados em antiparasitários, analgésicos e antitérmicos, trato gastrointestinal, anti-histamínicos, corticoides e anafilaxia.
+- Busca por nome e filtros por categoria.
+- Entrada de peso e idade, escolha do esquema e da apresentação.
+- Conversão automática da dose para mL, gotas ou unidades quando a apresentação permite cálculo direto.
+- Bloqueio de cópia quando idade, peso, apresentação obrigatória ou fracionamento não são compatíveis.
+- Orientações tópicas e esquemas com unidade ambígua permanecem em modo informativo, sem criar cálculo não sustentado.
+- Adrenalina para anafilaxia com cálculo IM por peso, teto máximo e alternativas fixas por idade.
